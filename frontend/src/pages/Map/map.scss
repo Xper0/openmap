@@ -1,0 +1,48 @@
+.Map-container {
+  display: flex;
+  margin-top: 50px;
+  justify-content: center;
+  padding: 10px;
+
+  .Map-option {
+    width: 300px;
+    height: 500px;
+    background-color: #fff;
+    box-shadow: 0 2px 2px #000;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .Map {
+    margin-left: 15px;
+    flex: 3;
+    width: 80vw;
+    height: 80vh;
+    display: flex;
+    justify-content: space-around;
+    .car__icon {
+      //border-radius: 50%;
+
+    }
+    .popup-info{
+      display: flex;
+      justify-content: space-around;
+      //align-items: center;
+      gap: 20px;
+      .popup-info__car{
+        display: flex;
+        flex-direction: column;
+        flex:1;
+        &>img {
+          width: 150px;
+          height: 70px;
+          border-radius: 20px;
+          margin: 5px 0;
+        }
+      }
+      .popup-info__driver{
+        flex: 1;
+      }
+    }
+  }
+}
