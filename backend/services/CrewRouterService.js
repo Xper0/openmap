@@ -1,32 +1,21 @@
 import CrewModel from "../models/CrewModel.js";
 
 
-const getService = () => {
+const CrewService = () => {
+
     return {
-        findOneCrew:  (crew) => {
+        findAllCrew: () => {
+            return CrewModel.find({});
+        },
+        findOneCrew: (crew) => {
             return CrewModel.findOne({_id: crew});
         },
-        findAll:  () => {
-            return CrewModel.findOne({});
+        addCrew: (crew) => {
+            return CrewModel.create(crew)
         }
 
     }
-
-    // async function findOneCrew {
-    //     const findCrew = await CrewModel.findOne({_id: crew})
-    //     return findCrew
-    // }}
-    // const findOneCrew = async (crew) => {
-    //     const findCrew = await CrewModel.findOne({_id: crew})
-    //     return findCrew
-    // }
 }
-// const findOneCrew = async (crew) => {
-//     const findCrew = await CrewModel.findOne()
-//     return findCrew
-// }
 
 
-
-
-export default getService;
+export default CrewService;

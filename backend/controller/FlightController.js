@@ -1,19 +1,46 @@
-import Flight from "../models/FlightRouterModel.js";;
+import FlightService from "../services/FlightRouterService.js";
+
+
 
 const findFlightRouter = async (req, res) => {
-    const flight = req.query;
-    let find = await Flight.findOne({router: flight.routeId, drivers: flight.driverId, shipment: flight.shipmentId})
-    res.status(200).json({
-        message: find
-    })
+    try {
+        const {id,top, skip} = req.query;
+        if (!id) {
+            const find = await FlightService().findAllFlightRouter();
+            const sliceFind = find.slice(skip, top)
+            res.status(200).json({
+                message: sliceFind
+            })
+        }
+        else {
+            const find = await FlightService().findOneFlightRouter(id)
+            // let find = await Flight.findOne({router: flight.routeId, drivers: flight.driverId, shipment: flight.shipmentId})
+            res.status(200).json({
+                message: find
+            })
+        }
+    }
+    catch (err) {
+        res.status(400).json({
+            message: err
+        })
+    }
+
 }
 
 const createFlightRouter = async (req, res) => {
-    const flight = req.query;
-    await Flight.create(flight)
-    res.status(200).json({
-        message: "Рейс добавлен"
-    })
+    try {
+        const flight = req.query;
+        await FlightService.addFlightRouter(flight)
+        res.status(200).json({
+            message: "Рейс добавлен"
+        })
+    }
+    catch (err){
+        res.status(400).json({
+            message: err
+        })
+    }
 
 }
 
@@ -27,3 +54,6 @@ const deleteFlightRouter = (req, res) => {
 
 
 export  {findFlightRouter, createFlightRouter, updateFlightRouter, deleteFlightRouter};
+
+export class createBDRouter {
+}

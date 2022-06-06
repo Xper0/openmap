@@ -6,11 +6,11 @@ import mapRouter from "./routs/MapRouter.js";
 import "dotenv/config";
 import EmployeeRouter from "./routs/EmployeeRouter.js";
 import VehicleRouter from "./routs/VehicleRouter.js";
-import flightRouter from "./routs/FlightRouter.js";
 import CrewRouter from "./routs/CrewRouter.js";
 import FlightRouter from "./routs/FlightRouter.js";
 import ReadyDriverRouter from "./routs/ReadyDriversRouter.js";
 import ShipmentRouter from "./routs/ShipmentRouter.js";
+import testBdRouter from "./routs/testBdRouter.js";
 
 
 
@@ -38,15 +38,15 @@ app.use(
  * ReadyDriverRouter - готовые водители
  * ShipmentRouter - груз
  */
-app.use(userRouters)
-app.use(mapRouter)
-app.use(EmployeeRouter)
-app.use(VehicleRouter)
+app.use("/api", userRouters)
+app.use("/api", mapRouter)
+app.use("/api", EmployeeRouter)
+app.use("/api", VehicleRouter)
 app.use("/api", CrewRouter)
-app.use(FlightRouter)
-app.use(ReadyDriverRouter)
-app.use(ShipmentRouter)
-
+app.use("/api", FlightRouter)
+app.use("/api", ReadyDriverRouter)
+app.use("/api", ShipmentRouter)
+app.use("/api", testBdRouter)
 
 app.listen(port, () => {
     try {

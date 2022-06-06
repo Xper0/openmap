@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import vehicle from "../testData/vehicle.js";
 const Schema = mongoose.Schema;
 
 
@@ -17,6 +18,6 @@ const vehicleRouteSchema = new Schema({
 
 
 const VehicleRoute = mongoose.model("Vehicles", vehicleRouteSchema);
-
+// VehicleRoute.create(vehicle)
 
 export default  VehicleRoute;

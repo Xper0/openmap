@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import employee from "../testData/employee.js";
 const Schema = mongoose.Schema;
 
 
@@ -20,6 +21,7 @@ const employeeSchema = new Schema({
 
 
 const Employees = mongoose.model("Employees", employeeSchema);
+// Employees.create(employee)
 
 
 export default  Employees;
