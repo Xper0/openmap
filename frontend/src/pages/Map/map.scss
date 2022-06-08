@@ -1,48 +1,243 @@
 .Map-container {
   display: flex;
-  margin-top: 50px;
-  justify-content: center;
-  padding: 10px;
-
-  .Map-option {
-    width: 300px;
-    height: 500px;
-    background-color: #fff;
-    box-shadow: 0 2px 2px #000;
-    gap: 20px;
-    flex: 1;
-  }
-
-  .Map {
-    margin-left: 15px;
-    flex: 3;
-    width: 80vw;
-    height: 80vh;
+  flex-direction: column;
+  //margin-top: 50px;
+  //justify-content: center;
+  //padding: 10px;
+  .Map-content {
     display: flex;
-    justify-content: space-around;
-    .car__icon {
-      //border-radius: 50%;
 
+    .Map-option {
+      width: 300px;
+      min-height: 500px;
+      background-color: #fff;
+      box-shadow: 0 2px 2px #000;
+      gap: 20px;
+      flex: 1;
     }
-    .popup-info{
+
+    .Map {
+      margin-left: 15px;
+      flex: 3;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       justify-content: space-around;
-      //align-items: center;
-      gap: 20px;
-      .popup-info__car{
+      z-index: 70;
+
+      .car__icon {
+        //border-radius: 50%;
+
+      }
+
+      .popup-info {
         display: flex;
-        flex-direction: column;
-        flex:1;
-        &>img {
-          width: 150px;
-          height: 70px;
-          border-radius: 20px;
-          margin: 5px 0;
+        justify-content: space-around;
+        //align-items: center;
+        gap: 20px;
+
+        .popup-info__car {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          & > img {
+            width: 150px;
+            height: 70px;
+            border-radius: 20px;
+            margin: 5px 0;
+          }
+        }
+
+        .popup-info__driver {
+          flex: 1;
         }
       }
-      .popup-info__driver{
-        flex: 1;
+    }
+
+    .drag_things_to_boxes {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+
+      .box {
+        border: 2px solid black;
+        border-radius: 4px;
+        min-width: 150px;
+        min-height: 276px;
+        margin: 10px 10px;
+        position: relative;
+
+        .BoxItem {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          min-height: 66px;
+          border: 1px solid #eee;
+          box-shadow: 4px 4px 9px rgba(198, 198, 198, 0.36);
+          border-radius: 20px;
+          //background: #f7f6f7;
+          background-color: #005577;
+          //padding: 0.8rem 1rem;
+          color: #ffffff;
+          text-align: center;
+          cursor: grab;
+
+          .BoxDrag {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+          }
+
+        }
       }
+
+      .drag-result {
+        border: 2px solid black;
+        border-radius: 4px;
+        width: 450px;
+        min-height: 276px;
+        margin: 10px 10px;
+        position: relative;
+
+        .drag-container {
+          min-width: 150px;
+          min-height: 276px;
+
+          .header {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+            background-color: #005577;
+            color: #eeeeee;
+          }
+
+          .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px;
+
+            .content_router {
+              display: flex;
+
+              & > h5 {
+                margin-right: 10px;
+              }
+
+              .box_router {
+                border: 2px dotted black;
+                min-width: 150px;
+                border-radius: 4px;
+
+                .BoxItem {
+                  display: flex;
+                  flex-direction: column;
+                  width: 100%;
+                  min-height: 66px;
+                  border: 1px solid #eee;
+                  box-shadow: 4px 4px 9px rgba(198, 198, 198, 0.36);
+                  border-radius: 20px;
+                  //background: #f7f6f7;
+                  background-color: #005577;
+                  //padding: 0.8rem 1rem;
+                  color: #ffffff;
+                  text-align: center;
+                  cursor: grab;
+
+                  .BoxDrag {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                  }
+
+                }
+
+              }
+            }
+
+            .content_crew {
+              display: flex;
+
+              & > h5 {
+                margin-right: 5px;
+              }
+
+              .box_crew {
+                min-width: 150px;
+                border: 2px dotted black;
+                border-radius: 4px;
+
+                .BoxItem {
+                  display: flex;
+                  flex-direction: column;
+                  width: 100%;
+                  min-height: 66px;
+                  border: 1px solid #eee;
+                  box-shadow: 4px 4px 9px rgba(198, 198, 198, 0.36);
+                  border-radius: 20px;
+                  //background: #f7f6f7;
+                  background-color: #005577;
+                  //padding: 0.8rem 1rem;
+                  color: #ffffff;
+                  text-align: center;
+                  cursor: grab;
+
+                  .BoxDrag {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                  }
+
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    //.drag_things_to_boxes .boxes {
+    //  display: flex;
+    //}
+
+    //.drag_things_to_boxes .box {
+    //  border: 2px solid black;
+    //  border-radius: 4px;
+    //  width: 150px;
+    //  min-height: 276px;
+    //  margin: 10px 80px 0 0;
+    //  position: relative;
+    //}
+
+    .drag_things_to_boxes .highlighted .box {
+      box-shadow: inset 0 0 4px #00f;
+    }
+
+    .drag_things_to_boxes .box .BoxItem .outer {
+      border-top: none;
+      min-width: 140px;
+      max-width: 140px;
+      overflow: hidden;
+    }
+
+    .drag_things_to_boxes .box .BoxItem .highlighted .outer {
+      border-top: 40px solid #ddd;
+    }
+
+    .drag_things_to_boxes .box .BoxItem .item {
+      color: white;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 3px;
+      background-color: #005577;
+    }
+
+    .drag_things_to_boxes .box .BoxItem .grabber {
+      font-size: 14px;
+      font-weight: bold;
+      padding-right: 6px;
     }
   }
 }

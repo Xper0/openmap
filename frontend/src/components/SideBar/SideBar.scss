@@ -1,0 +1,173 @@
+
+.Drawer {
+  position: absolute;
+  width: 100%;
+  min-height: 100vh;
+  //background-color: rgba(0, 0, 0, 0.5);
+  //top:0;
+  //left: 0;
+  //z-index: 99;
+  //overflow: hidden;
+  //opacity: 0.1;
+  transition: ease-in-out 0.3s;
+  //visibility: hidden;
+
+  .Drawer-content {
+    z-index: 99;
+    padding: 30px;
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 385px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    box-shadow: -10px 4px 24px rgba(0, 0, 0, 0.1);
+    transition: ease-in-out 0.6s;
+    transform: translateX(-100%);
+    opacity: 0.82;
+    .Sidebar-containerBtn{
+      position: absolute;
+      top: 0;
+      right: -30px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      padding: 8px 0;
+      border-radius: 0 4px 4px 0;
+      text-align: center;
+      box-shadow: 0 1px 3px 0 rgb(38 38 38 / 50%);
+      color: #262626;
+      &:hover{
+        background: #dddddd;
+      }
+      .Sidebar-containerBtn__btn{
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        transform: translate(-30%, 0%);
+      }
+    }
+
+    .Drawer-items{
+      flex: 1;
+      overflow: auto;
+      margin-bottom: 40px;
+
+      .Drawer-card{
+        display: flex;
+        width: 325px;
+        height: 119px;
+        justify-content: center;
+        align-items: center;
+        background: #FFFFFF;
+        border: 1px solid #F3F3F3;
+        box-sizing: border-box;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        margin-top: 30px;
+
+        .Drawer-card__img{
+          width: 70px;
+          height: 70px;
+          margin: 0 21px;
+
+        }
+
+        .Drawer-card__body{
+
+          .Drawer-card__title{
+            font-family: Inter, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            color: #000000;
+            margin: 0;
+          }
+
+          .Drawer-card__cost{
+            font-family: Inter, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            /* identical to box height */
+            color: #000000;
+            margin-top: 8px;
+          }
+        }
+
+        .Drawer-card__close{
+          margin-right: 20px;
+          margin-left: 12px;
+          cursor: pointer;
+        }
+      }
+    }
+    .Drawer-price{
+
+      .Drawer-price__item{
+        display: flex;
+        justify-content: space-between;
+        list-style: none;
+        align-items: center;
+        position: relative;
+
+        .Drawer-price__desk{
+          font-family: Inter, sans-serif;
+          font-weight: 300;
+          font-size: 18px;
+          color: #000000;
+          position: relative;
+          padding-right: 5px;
+          //flex: 1;
+
+        }
+
+        div{
+          border-bottom: 1px dotted #000000;
+          width: 45%;
+          padding-top: 13px;
+        }
+
+        span{
+          font-family: Inter, sans-serif;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 16px;
+          color: #000000;
+          padding-left: 5px;
+        }
+      }
+    }
+
+    .Drawer-price__btn{
+      margin-top: 20px;
+      width: 325px;
+      height: 55px;
+      background: #9DD558;
+      border-radius: 18px;
+      font-family: Inter, sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+      color: #FFFFFF;
+      border: none;
+
+      &:hover{
+        transform: scale(1.1);
+        background: #9DD579;
+        cursor: pointer;
+      }
+    }
+  }
+
+}
+.Drawer-active{
+  visibility: visible;
+  opacity: 1;
+
+  .Drawer-content{
+    transform: translateX(0);
+  }
+}

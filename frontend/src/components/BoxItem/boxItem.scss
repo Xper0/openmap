@@ -1,0 +1,28 @@
+.BoxItem {
+  width: 100%;
+}
+
+.BoxItem .outer {
+  border-top: none;
+  min-width: 140px;
+  max-width: 140px;
+  overflow: hidden;
+}
+
+.BoxItem .highlighted .outer {
+  border-top: 40px solid #ddd;
+}
+
+.BoxItem .item {
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 3px;
+  background-color: #005577;
+}
+
+.BoxItem .grabber {
+  font-size: 14px;
+  font-weight: bold;
+  padding-right: 6px;
+}
