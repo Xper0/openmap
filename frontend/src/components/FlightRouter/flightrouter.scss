@@ -1,0 +1,11 @@
+.flightrouter{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  .flightrouter-content{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+}

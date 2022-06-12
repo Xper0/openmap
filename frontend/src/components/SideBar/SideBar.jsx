@@ -22,7 +22,6 @@ const Sidebar = ({active, setActive, children}) => {
                 <div className="Sidebar-containerBtn" onClick={onClose}>
                         <ArrowBackIosIcon className="Sidebar-containerBtn__btn" />
                 </div>
-
                 {children}
             </div>
 

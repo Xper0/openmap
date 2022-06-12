@@ -6,17 +6,31 @@ import AppContext from "../../context/Context";
 
 const Box = (props, datalist) => {
     const [item, setItem] = useState([datalist])
-    const {swap, setSwap, setCrew, setCrewRoute}  = useContext(AppContext)
+    const {boxes, setBoxes, flightRouteBox, setFlightRouteBox, flightCrewBox, setFlightCrewBox, setRouteDrop,setCrewDrop,swap, setSwap, setCrew, setCrewRoute}  = useContext(AppContext)
     const [changeItem, setChangeItem] = useState([])
-
-    const drop = (e) => {
+    const drop = (e, dats) => {
         e.preventDefault();
-        console.log(props)
-        console.log(e)
+        console.log(datalist)
+        console.log(dats)
+        console.log(e.dataTransfer.getData(props))
         const card_id = e.dataTransfer.getData("card_id")
         console.log(card_id)
         const card = document.getElementById(card_id)
         // card.style.display = "block"
+        console.log(card)
+        switch (card_id) {
+            case "board-route": {
+                setRouteDrop();
+                break;
+            }
+            case "board-crew": {
+                setCrewDrop()
+                break;
+            }
+        }
+
+        // setRouteDrop()
+        // setCrewDrop()
         let item = e.target.appendChild(card)
 
 
@@ -64,40 +78,11 @@ const Box = (props, datalist) => {
         <div
             // className="Box"
              className={props.className}
-             id={props.id}
-             onDrop={drop}
+             id={props}
+             onDrop={(e) => drop(e, datalist)}
              onDragOver={dragover}
         >
-            {/*<DropTarget*/}
-            {/*    onHit={handleDrop}*/}
-            {/*    // targetKey={this.props.targetKey}*/}
-            {/*    // dropData={{name: this.props.name}}*/}
-            {/*>*/}
-            {/*    <DropTarget*/}
-            {/*        onHit={handleDrop}*/}
-            {/*        targetKey="boxItem"*/}
-            {/*        // dropData={{name: this.props.name}}*/}
-            {/*    >*/}
-            {/*        <div className="box">*/}
-            {/*            {datalist.map((item, index) => {*/}
-            {/*                return (*/}
-            {/*                    <DragDropContainer*/}
-            {/*                        targetKey="boxItem"*/}
-            {/*                        dragData={item}*/}
-            {/*                        // onDrop={this.deleteMe}*/}
-            {/*                        // disappearDraggedElement={true}*/}
-            {/*                        dragHandleClassName="grabber"*/}
-            {/*                        key={index}*/}
-            {/*                    >*/}
-            {/*                        <BoxItem key={index} data={item}>*/}
-            {/*                            /!*{item}*!/*/}
-            {/*                        </BoxItem>*/}
-            {/*                    </DragDropContainer>*/}
-            {/*                )*/}
-            {/*            })}*/}
-            {/*        </div>*/}
-            {/*    </DropTarget>*/}
-            {/*</DropTarget>*/}
+            <div className="box-title">{props.title}</div>
             {props.children}
         </div>
     );

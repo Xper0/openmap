@@ -20,18 +20,18 @@ const BoxItem = (props,data) => {
         this.props.kill(this.props.uid);
     };
 
-    const drop = (e) => {
+    const Drop = (e) => {
         e.preventDefault();
         console.log(e)
     }
     const dragover = (e) => {
         e.preventDefault();
-        // console.log(e)
     }
     const dragStart = (e) => {
         const target = e.target
         console.log(props)
         let item = e.dataTransfer.setData("card_id", target.id)
+        props.func(data)
         // console.log(target)
         setTimeout(() => {
             target.style.border = "none"
@@ -41,45 +41,13 @@ const BoxItem = (props,data) => {
     return (
         <div
             // className="BoxItem"
+            draggable={true}
             className={props.className}
             id={props.id}
-            onDrop={drop}
+            onDrop={Drop}
             onDragOver={dragover}
             onDragStart={dragStart}
         >
-            {/*/!*<DragDropContainer*!/*/}
-            {/*/!*    targetKey="boxItem"*!/*/}
-            {/*/!*    dragData={data}*!/*/}
-            {/*/!*    // onDrop={this.deleteMe}*!/*/}
-            {/*/!*    // disappearDraggedElement={true}*!/*/}
-            {/*/!*    dragHandleClassName="grabber"*!/*/}
-            {/*/!*>*!/*/}
-            {/*    <DropTarget*/}
-            {/*        onHit={handleDrop}*/}
-            {/*        targetKey="boxItem"*/}
-            {/*    >*/}
-            {/*        <div className="outer">*/}
-            {/*            <div className="item">*/}
-            {/*                <span className="grabber">&#8759;</span>*/}
-            {/*                {item.hasOwnProperty("drivers") ? item.drivers.map( (driver,index) =>*/}
-            {/*                    <div key={index}>*/}
-            {/*                        <h3>{`${driver.firstName} ${driver.secondName} ${driver.middleName}`}</h3>*/}
-            {/*                        <span>{driver.job_position}</span>*/}
-            {/*                        <span>{item.vehicle.license_number}</span>*/}
-            {/*                        <span>{item.vehicle.type_vehicle}</span>*/}
-            {/*                        <span>{item.vehicle.wear_vehicle}</span>*/}
-            {/*                    </div>*/}
-            {/*                ) :*/}
-            {/*                    (item.titleRoute &&*/}
-            {/*                      <div >*/}
-            {/*                          <h3>{item.titleRoute}</h3>*/}
-            {/*                      </div>)*/}
-
-            {/*                }*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </DropTarget>*/}
-            {/*</DragDropContainer>*/}
             {props.children}
         </div>
     );

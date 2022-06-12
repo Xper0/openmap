@@ -26,8 +26,8 @@ import Crew from "../../components/Crew/Crew";
 
 
 const Map = () => {
-    const {coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
-    const [activePage, setActivePage] = useState(false)
+    const {activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
+    // const [activePage, setActivePage] = useState(true)
     // const [coordinates, setCoordinates] = useState([]);
     const [markerCar, setMarkerCar] = useState([])
     // const [loading, setLoading] = useState(false)
