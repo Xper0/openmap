@@ -2,8 +2,12 @@ import React, {useContext, useState} from 'react';
 import "./boxItem.scss";
 import {DragDropContainer, DropTarget} from "react-drag-drop-container";
 import AppContext from "../../context/Context";
+import {  useDispatch } from 'react-redux'
+import {dragData, setDragData} from "../../redux/features/dragdropSlice";
+
 
 const BoxItem = (props,data) => {
+    const dispatch = useDispatch();
     const {coordinates, setCoordinates, loading, setLoading, crew, setCrew, swap, setSwap}  = useContext(AppContext)
 
     const [item, setItem] = useState(data)
@@ -22,7 +26,6 @@ const BoxItem = (props,data) => {
 
     const Drop = (e) => {
         e.preventDefault();
-        console.log(e)
     }
     const dragover = (e) => {
         e.preventDefault();
@@ -30,12 +33,17 @@ const BoxItem = (props,data) => {
     const dragStart = (e) => {
         const target = e.target
         console.log(props)
-        let item = e.dataTransfer.setData("card_id", target.id)
-        props.func(data)
-        // console.log(target)
-        setTimeout(() => {
-            target.style.border = "none"
-        }, 0)
+        dispatch(setDragData({
+            id: props.id,
+            initialItem: props.item
+        }))
+        let flightroutId = document.querySelector('#flightCrewBox');
+        flightroutId.style.border = "3px solid green"
+        console.log(flightroutId)
+
+        // setTimeout(() => {
+        //     target.style.border = "none"
+        // }, 0)
     }
 
     return (

@@ -1,8 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Box from "../Box/Box";
 import BoxItem from "../BoxItem/BoxItem";
 import AppContext from "../../context/Context";
 import "./crew.scss";
+import { useSelector, useDispatch } from 'react-redux'
+import {setInitData} from "../../redux/features/dragdropSlice";
+
 import road from "../../assets/roades.json";
 import point from "turf-point";
 import nearestPoint from "@turf/nearest-point";
@@ -10,6 +13,28 @@ import PathFinder from "geojson-path-finder";
 
 const Crew = () => {
     const {setFlightCrewBoxrouteDrop, setRouteDrop,crewDrop, setCrewDrop,activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew}  = useContext(AppContext)
+    const dispatch = useDispatch();
+    let boxData = useSelector( (state) => state.dragdropSlice.initData)
+    const copyBoxDta = JSON.parse(JSON.stringify(boxData))
+
+    // dispatch(setInitData({
+    //     routeBox: coordinates.result,
+    //     crewBox: crew.message,
+    //     flightRouteBox: [],
+    //     flightCrewBox: []
+    // }))
+    const load = () => {
+        dispatch(setInitData({
+            routeBox: coordinates.result,
+            crewBox: crew.message,
+            flightRouteBox: [],
+            flightCrewBox: []
+        }))
+    }
+    useEffect(() => {
+        load()
+    }, [])
+    console.log(boxData)
     // const [routeDrop, setRouteDrop] =useState([])
     // const [crewDrop, setCrewDrop] = useState([])
     // const showPath = () => {
@@ -107,6 +132,7 @@ const Crew = () => {
 
     }
     console.log(flightRouteBox)
+
     const dragover = (e) => {
         e.preventDefault();
         if (e.target.className == "BoxItem") {
@@ -143,12 +169,17 @@ const Crew = () => {
     function handleDragLeave() {
 
     }
-
     const changeCategory = (itemId, group) => {
-        const currentItem = initialState[itemId].indexOf(dragData.initialItem);
-        initialState[itemId].splice(currentItem, 1);
-        // console.log(initialState[group])
-        initialState[group].push(dragData.initialItem)
+        // const currentItem = initialState[itemId].indexOf(dragData.initialItem);
+        console.log(itemId)
+        console.log(group)
+
+        const currentItem = copyBoxDta[itemId].indexOf(dragData.initialItem);
+        console.log(dragData)
+        // const dropIndex =
+        let dropdata = copyBoxDta[itemId].splice(currentItem, 1);
+       console.log(dropdata)
+        copyBoxDta[group].push(dragData.initialItem)
         // const newList = {
         //     routeGroup: delEl,
         //     resultGroup: addEl
@@ -159,19 +190,16 @@ const Crew = () => {
         //     crewGroup: initialState.crewGroup
         //
         // })
+        dispatch(setInitData(copyBoxDta))
+        // setInitialState(prev => ({...prev, ...initialState}))
 
-        setInitialState(prev => ({...prev, ...initialState}))
-
-        console.log(currentItem)
-        console.log(itemId)
-        console.log(group)
         // let arr = newItems.map()
 
         // console.log(arr)
         // newItems[itemId - 1].group = group;
         // setInitialState([...newItems]);
     };
-    console.log(initialState)
+    console.log(boxData)
     function handleDrop(e, group) {
         const selected = dragData.id
         changeCategory(selected, group);
@@ -180,68 +208,156 @@ const Crew = () => {
     function handleDragStart(e, id, item) {
         setDragData({ id: id, initialItem: item });
     }
+
     return (
         <div className="Crew">
             {/*<div className="Map-option">*/}
                 {/*<button onClick={() => showPath()} >Расчет</button>*/}
                 {/*<button onClick={() => createAutoRoute()} >Построить маршрут</button>*/}
                 {/*<button onClick={()=> clearMap()}>Очистить карту</button>*/}
+                {/*<button onClick={() => load()}>Загрузить данные</button>*/}
                 <div className="drag_things_to_boxes">
-                        <div className="box" id="routeGroup"
-                             onDragEnter={(e) => handleDragEnter(e)}
-                             onDragOver={handleDragOver}
-                             onDragLeave={handleDragLeave}
-                             onDrop={(e) => handleDrop(e, "routeGroup")}
-                        >
-                            <h1>{"Маршруты"}</h1>
-                            <div>
-                                {initialState.routeGroup.map(item =>
-                                    <div
-                                        key={item.titleRoute}
-                                        className="BoxItem"
-                                        draggable={true}
-                                        onDragStart={(e) => handleDragStart(e, "routeGroup", item)}
-                                    >
-                                        <span>{item.titleRoute}</span>
-                                    </div>
-                                )}
+                        {/*<div className="box" id="routeGroup"*/}
+                        {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
+                        {/*     onDragOver={handleDragOver}*/}
+                        {/*     onDragLeave={handleDragLeave}*/}
+                        {/*     onDrop={(e) => handleDrop(e, "routeBox")}*/}
+                        {/*>*/}
+                        {/*    <h1>{"Маршруты"}</h1>*/}
+                        {/*    <div>*/}
+                        {/*        {boxData.routeBox.map(item =>*/}
+                        {/*            <div*/}
+                        {/*                key={item.titleRoute}*/}
+                        {/*                className="BoxItem"*/}
+                        {/*                draggable={true}*/}
+                        {/*                onDragStart={(e) => handleDragStart(e, "routeBox", item)}*/}
+                        {/*            >*/}
+                        {/*                <span>{item.titleRoute}</span>*/}
+                        {/*            </div>*/}
+                        {/*        )}*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
+                    {/*<div className="box" id="crewGroup"*/}
+                    {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
+                    {/*     onDragOver={handleDragOver}*/}
+                    {/*     onDragLeave={handleDragLeave}*/}
+                    {/*     onDrop={(e) => handleDrop(e, "crewGroup")}*/}
+                    {/*>*/}
+                    {/*    <h1>{"Экипаж"}</h1>*/}
+                    {/*    <div>*/}
+                    {/*        {initialState.crewGroup.map((item,i) =>*/}
+                    {/*            <div   key={item.titleRoute}*/}
+                    {/*                   className="BoxItem"*/}
+                    {/*                   draggable={true}*/}
+                    {/*                   onDragStart={(e) => handleDragStart(e,  "crewGroup", item)}>*/}
+                    {/*                <span>{item.titleRoute}</span>*/}
+                    {/*            </div>*/}
+                    {/*        )}*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                    {/*<div className="box" id="resultGroup"*/}
+                    {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
+                    {/*     onDragOver={handleDragOver}*/}
+                    {/*     onDragLeave={handleDragLeave}*/}
+                    {/*     onDrop={(e) => handleDrop(e, "flightRouteBox")}*/}
+                    {/*>*/}
+                    {/*    <h1>{"Результат"}</h1>*/}
+                    {/*        {boxData.flightRouteBox.map( (item,index) =>*/}
+                    {/*            <div*/}
+                    {/*                key={index}*/}
+                    {/*                className="BoxItem"*/}
+                    {/*                draggable={true}*/}
+                    {/*                onDragStart={(e) => handleDragStart(e,  "flightRouteBox", item)}>*/}
+                    {/*                {item.titleRoute}*/}
+                    {/*            </div>*/}
+                    {/*        )}*/}
+                    {/*</div>*/}
+
+                    <Box className="box" id="routeBox" title={"Маршруты"}>
+                            {boxData.routeBox && boxData.routeBox.map((routeItem,i) =>
+                                <BoxItem
+                                    key={i}
+                                    className="BoxItem"
+                                    id={"routeBox"}
+                                    item={routeItem}
+                                >
+                                    <h3>{routeItem.titleRoute}</h3>
+                                </BoxItem>
+                            )}
+                    </Box>
+                    <div className="drag-result">
+                        <div className="drag-container">
+                            <div className="header">
+                                <h2>Рейс</h2>
+                            </div>
+                            <div className="content">
+                                <div className="content_router">
+                                    <h5>Маршрут</h5>
+                                    <Box id="flightRouteBox" className="box_router">
+                                        {/*{boxData.flightRouteBox}*/}
+                                        {boxData.flightRouteBox && boxData.flightRouteBox.map((routeItem,i) =>
+                                            <BoxItem
+                                                key={i}
+                                                className="BoxItem"
+                                                id={"flightRouteBox"}
+                                                item={routeItem}
+                                            >
+                                                <h3>{routeItem.titleRoute}</h3>
+                                            </BoxItem>
+                                        )}
+                                    </Box>
+                                </div>
+                                <div className="content_crew">
+                                    <h5>Экипаж</h5>
+                                    <Box id="flightCrewBox" className="box_crew">
+                                        {/*{boxData.flightCrewBox}*/}
+                                        {boxData.flightCrewBox && boxData.flightCrewBox.map((crewItem,i) => crewItem.drivers.length !== 0 ?
+                                            <BoxItem
+                                                key={i}
+                                                className="BoxItem"
+                                                id={"flightCrewBox"}
+                                                item={crewItem}
+                                            >
+                                                {crewItem.drivers.map((driver) =>
+                                                    <div key={driver.firstName}  className="BoxDrag"  >
+                                                        <h3>{`${driver.firstName} ${driver.secondName} ${driver.middleName}`}</h3>
+                                                        <span>{driver.job_position}</span>
+                                                        <span>{crewItem.vehicle.license_number}</span>
+                                                        <span>{crewItem.vehicle.type_vehicle}</span>
+                                                        <span>{crewItem.vehicle.wear_vehicle}</span>
+                                                    </div>)
+
+                                                }
+                                            </BoxItem> : null
+                                        )}
+                                    </Box>
+                                </div>
+
                             </div>
                         </div>
-                    <div className="box" id="crewGroup"
-                         onDragEnter={(e) => handleDragEnter(e)}
-                         onDragOver={handleDragOver}
-                         onDragLeave={handleDragLeave}
-                         onDrop={(e) => handleDrop(e, "crewGroup")}
-                    >
-                        <h1>{"Экипаж"}</h1>
-                        <div>
-                            {initialState.crewGroup.map((item,i) =>
-                                <div   key={item.titleRoute}
-                                       className="BoxItem"
-                                       draggable={true}
-                                       onDragStart={(e) => handleDragStart(e,  "crewGroup", item)}>
-                                    <span>{item.titleRoute}</span>
-                                </div>
-                            )}
-                        </div>
                     </div>
-                    <div className="box" id="resultGroup"
-                         onDragEnter={(e) => handleDragEnter(e)}
-                         onDragOver={handleDragOver}
-                         onDragLeave={handleDragLeave}
-                         onDrop={(e) => handleDrop(e, "resultGroup")}
-                    >
-                        <h1>{"Результат"}</h1>
-                            {initialState.resultGroup.map( (item,index) =>
-                                <div
-                                    key={index}
-                                    className="BoxItem"
-                                    draggable={true}
-                                    onDragStart={(e) => handleDragStart(e,  "resultGroup", item)}>
-                                    {item.titleRoute}
-                                </div>
-                            )}
-                    </div>
+                    <Box className="box" id="crewBox" title={"Экипаж"}>
+                        {boxData.crewBox && boxData.crewBox.map((crewItem,i) => crewItem.drivers.length !== 0 ?
+                            <BoxItem
+                                key={i}
+                                className="BoxItem"
+                                id={"crewBox"}
+                                item={crewItem}
+                            >
+                                {crewItem.drivers.map((driver) =>
+                                    <div key={driver.firstName}  className="BoxDrag"  >
+                                        <h3>{`${driver.firstName} ${driver.secondName} ${driver.middleName}`}</h3>
+                                        <span>{driver.job_position}</span>
+                                        <span>{crewItem.vehicle.license_number}</span>
+                                        <span>{crewItem.vehicle.type_vehicle}</span>
+                                        <span>{crewItem.vehicle.wear_vehicle}</span>
+                                    </div>)
+
+                                }
+                            </BoxItem> : null
+                        )}
+                    </Box>
+
 
 
                     {/*<div className="box" id="crewBox"*/}

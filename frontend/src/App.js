@@ -29,10 +29,10 @@ function App() {
     // const [flightRouteBox, setFlightRouteBox] = useState([])
     // const [flightCrewBox, setFlightCrewBox] = useState([])
     // const [boxes, setBoxes]= useState({})
-    const dispatch = useDispatch();
-    console.dir(dispatch)
-    let testRedux = useSelector( (state) => state)
-    console.log(testRedux)
+    // const dispatch = useDispatch();
+    // console.dir(dispatch)
+    // let testRedux = useSelector( (state) => state)
+    // console.log(testRedux)
 
 
     const getData = async () => {

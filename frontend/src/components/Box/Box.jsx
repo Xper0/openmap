@@ -3,35 +3,50 @@ import "./box.scss";
 import {DropTarget, DragDropContainer} from "react-drag-drop-container";
 import BoxItem from "../BoxItem/BoxItem";
 import AppContext from "../../context/Context";
+import { useSelector, useDispatch } from 'react-redux';
+import {setInitData} from "../../redux/features/dragdropSlice";
+
+
 
 const Box = (props, datalist) => {
+    let boxData = useSelector( (state) => state.dragdropSlice.initData);
+    let dragdropData =  useSelector( (state) => state.dragdropSlice.dragData);
+    const dispatch = useDispatch();
+    const copyBoxDta = JSON.parse(JSON.stringify(boxData))
+
     const [item, setItem] = useState([datalist])
     const {boxes, setBoxes, flightRouteBox, setFlightRouteBox, flightCrewBox, setFlightCrewBox, setRouteDrop,setCrewDrop,swap, setSwap, setCrew, setCrewRoute}  = useContext(AppContext)
     const [changeItem, setChangeItem] = useState([])
     const drop = (e, dats) => {
         e.preventDefault();
-        console.log(datalist)
-        console.log(dats)
-        console.log(e.dataTransfer.getData(props))
-        const card_id = e.dataTransfer.getData("card_id")
-        console.log(card_id)
-        const card = document.getElementById(card_id)
+        console.log(dragdropData)
+        console.dir(props.id)
+        console.log(copyBoxDta[dragdropData.id])
+        const currentItem = copyBoxDta[dragdropData.id].indexOf(dragdropData.initialItem);
+
+        copyBoxDta[dragdropData.id].splice(currentItem, 1);
+        console.log(copyBoxDta)
+        copyBoxDta[props.id].push(dragdropData.initialItem)
+        dispatch(setInitData(copyBoxDta))
+        // const card_id = e.dataTransfer.getData("card_id")
+        //
+        // const card = document.getElementById(card_id)
         // card.style.display = "block"
-        console.log(card)
-        switch (card_id) {
-            case "board-route": {
-                setRouteDrop();
-                break;
-            }
-            case "board-crew": {
-                setCrewDrop()
-                break;
-            }
-        }
+
+        // switch (card_id) {
+        //     case "board-route": {
+        //         setRouteDrop();
+        //         break;
+        //     }
+        //     case "board-crew": {
+        //         setCrewDrop()
+        //         break;
+        //     }
+        // }
 
         // setRouteDrop()
         // setCrewDrop()
-        let item = e.target.appendChild(card)
+        // let item = e.target.appendChild(card)
 
 
     }
@@ -40,6 +55,14 @@ const Box = (props, datalist) => {
 
         // console.log(e)
     }
+    const  DragStart = (e) => {
+        // console.log(e)
+        // const card = document.getElementById("flightRouteBox")
+        // console.log(card)
+        // // e.style.border = "3px solid red"
+        // console.dir(props.id)
+    }
+
 
 
 
@@ -63,23 +86,15 @@ const Box = (props, datalist) => {
         // this.setState({items: items});
     };
 
-    const kill = (uid) => {
-        // let items = this.state.items.slice();
-        // const index = items.findIndex((item) => {
-        //     return item.uid == uid
-        // });
-        // if (index !== -1) {
-        //     items.splice(index, 1);
-        // }
-        // this.setState({items: items});
-    };
+
 
     return (
         <div
             // className="Box"
              className={props.className}
-             id={props}
-             onDrop={(e) => drop(e, datalist)}
+             id={props.id}
+             onDrop={(e) => drop(e)}
+             onDragStart={(e) => DragStart(e)}
              onDragOver={dragover}
         >
             <div className="box-title">{props.title}</div>

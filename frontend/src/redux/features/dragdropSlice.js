@@ -1,22 +1,30 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    id: null,
-    group: [],
-    value: []
+    initData: {
+        routeBox: [],
+        crewBox: [],
+        flightRouteBox: [],
+        flightCrewBox: []
+    },
+    dragData: ""
+
 }
 
 export const dragdropSlice = createSlice({
     name: 'dragdrop',
     initialState,
     reducers: {
-        incrementByAmount: (state, action) => {
-            state.value += action.payload
+        setInitData: (state, action) => {
+            state.initData = action.payload
         },
+        setDragData: (state, action) => {
+            state.dragData = action.payload
+        }
     },
 })
 
 
-export const { incrementByAmount } = dragdropSlice.actions
+export const { setInitData, setDragData } = dragdropSlice.actions
 
 export default dragdropSlice.reducer
