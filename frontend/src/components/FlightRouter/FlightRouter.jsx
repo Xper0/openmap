@@ -7,8 +7,6 @@ import "./flightrouter.scss";
 const FlightRouter = () => {
     const { activePage, setActivePage, flightRouter, setFlightRouter, loading, setLoading} = useContext(AppContext)
     let [value,setValue] = useState("")
-    console.log(value)
-
 
     const defaultProps = {
         options: flightRouter.map((option, index) => option.router.titleRoute),

@@ -10,31 +10,32 @@ import road from "../../assets/roades.json";
 import point from "turf-point";
 import nearestPoint from "@turf/nearest-point";
 import PathFinder from "geojson-path-finder";
+import axios from "axios";
+import {Button} from "@mui/material";
 
 const Crew = () => {
     const {setFlightCrewBoxrouteDrop, setRouteDrop,crewDrop, setCrewDrop,activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew}  = useContext(AppContext)
     const dispatch = useDispatch();
     let boxData = useSelector( (state) => state.dragdropSlice.initData)
     const copyBoxDta = JSON.parse(JSON.stringify(boxData))
-
     // dispatch(setInitData({
     //     routeBox: coordinates.result,
     //     crewBox: crew.message,
     //     flightRouteBox: [],
     //     flightCrewBox: []
     // }))
-    const load = () => {
-        dispatch(setInitData({
-            routeBox: coordinates.result,
-            crewBox: crew.message,
-            flightRouteBox: [],
-            flightCrewBox: []
-        }))
-    }
-    useEffect(() => {
-        load()
-    }, [])
-    console.log(boxData)
+    // const load = () => {
+    //     dispatch(setInitData({
+    //         routeBox: coordinates.result,
+    //         crewBox: crew.message,
+    //         flightRouteBox: [],
+    //         flightCrewBox: []
+    //     }))
+    // }
+    // useEffect(() => {
+    //     load()
+    // }, [])
+
     // const [routeDrop, setRouteDrop] =useState([])
     // const [crewDrop, setCrewDrop] = useState([])
     // const showPath = () => {
@@ -117,7 +118,7 @@ const Crew = () => {
     const [currentItem, setCurrentItem] = useState(null)
     const Drop = (e) => {
         e.preventDefault();
-        console.log(currentItem)
+
         setFlightRouteBox(currentItem)
         // const currentIndex = currentBoard.indexOf(currentItem)
         // currentBoard.splice(currentIndex, 1)
@@ -131,7 +132,6 @@ const Crew = () => {
         // }))
 
     }
-    console.log(flightRouteBox)
 
     const dragover = (e) => {
         e.preventDefault();
@@ -171,14 +171,9 @@ const Crew = () => {
     }
     const changeCategory = (itemId, group) => {
         // const currentItem = initialState[itemId].indexOf(dragData.initialItem);
-        console.log(itemId)
-        console.log(group)
-
         const currentItem = copyBoxDta[itemId].indexOf(dragData.initialItem);
-        console.log(dragData)
         // const dropIndex =
         let dropdata = copyBoxDta[itemId].splice(currentItem, 1);
-       console.log(dropdata)
         copyBoxDta[group].push(dragData.initialItem)
         // const newList = {
         //     routeGroup: delEl,
@@ -199,7 +194,7 @@ const Crew = () => {
         // newItems[itemId - 1].group = group;
         // setInitialState([...newItems]);
     };
-    console.log(boxData)
+
     function handleDrop(e, group) {
         const selected = dragData.id
         changeCategory(selected, group);
@@ -207,6 +202,22 @@ const Crew = () => {
 
     function handleDragStart(e, id, item) {
         setDragData({ id: id, initialItem: item });
+    }
+    const saveData = async () => {
+      if((boxData.flightCrewBox.length && boxData.flightRouteBox.length && boxData.flightShipment.length) !== 0){
+         let obj = {
+             router: boxData.flightRouteBox[0]._id,
+             drivers: boxData.flightCrewBox[0]._id,
+             date: new Date(),
+             shipment: boxData.flightShipment[0]._id
+         }
+          const {data} = await axios.post("http://127.0.0.1:5000/api/flightRouter", obj)
+          console.log(data.message)
+          window.alert("Новый рейс создан")
+      }
+      else {
+          window.alert("Не все поля заполнены!")
+      }
     }
 
     return (
@@ -285,6 +296,27 @@ const Crew = () => {
                                 </BoxItem>
                             )}
                     </Box>
+                    <Box className="box" id="shipmentBox" title={"Груз"}>
+                        {boxData.shipmentBox && boxData.shipmentBox.map((shipmentItem,i) =>
+                            <BoxItem
+                                key={shipmentItem._id}
+                                className="BoxItem"
+                                id={"shipmentBox"}
+                                item={shipmentItem}
+                            >
+                                {shipmentItem.shipment.map( (ship,i) =>
+                                    <div key={i} className="BoxDrag" >
+                                        <h3>{ship.name}</h3>
+                                        <span>{ship.weight}</span>
+                                        {ship.producer &&
+                                            <span>{ship.producer}</span>
+                                        }
+                                    </div>
+                                )}
+                            </BoxItem>
+                        )}
+                    </Box>
+
                     <div className="drag-result">
                         <div className="drag-container">
                             <div className="header">
@@ -329,6 +361,30 @@ const Crew = () => {
 
                                                 }
                                             </BoxItem> : null
+                                        )}
+                                    </Box>
+                                </div>
+                                <div className="content_router">
+                                    <h5>Груз</h5>
+                                    <Box id="flightShipment" className="box_router">
+                                        {/*{boxData.flightRouteBox}*/}
+                                        {boxData.flightShipment && boxData.flightShipment.map((shipmentItem,i) =>
+                                            <BoxItem
+                                                key={i}
+                                                className="BoxItem"
+                                                id={"flightShipment"}
+                                                item={shipmentItem}
+                                            >
+                                                {shipmentItem.shipment.map( (ship,i) =>
+                                                    <div key={i} className="BoxDrag" >
+                                                        <h3>{ship.name}</h3>
+                                                        <span>{ship.weight}</span>
+                                                        {ship.producer &&
+                                                            <span>{ship.producer}</span>
+                                                        }
+                                                    </div>
+                                                )}
+                                            </BoxItem>
                                         )}
                                     </Box>
                                 </div>
@@ -502,8 +558,22 @@ const Crew = () => {
                     {/*}*/}
                 </div>
                 <div>
-                    <button>Сохранить</button>
-                    <button onClick={() => setActivePage(!activePage)}>Отменить</button>
+                    {/*<button onClick={() => saveData()}>Сохранить</button>*/}
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => saveData()}
+                    >
+                        Сохранить
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => setActivePage(!activePage)}
+                    >
+                        Отменить
+                    </Button>
+                    {/*<button onClick={() => setActivePage(!activePage)}>Отменить</button>*/}
                 </div>
 
             {/*</div>*/}

@@ -19,7 +19,7 @@ const crewRouteSchema = new Schema({
 
 crewRouteSchema.plugin(mongooseAutoPopulate)
 
-const Crew = mongoose.model("Crew", crewRouteSchema);
+const Crew = mongoose.model("Crews", crewRouteSchema);
 // Crew.create(crew)
 
 export default  Crew;

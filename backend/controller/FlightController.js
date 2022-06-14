@@ -30,15 +30,17 @@ const findFlightRouter = async (req, res) => {
 
 const createFlightRouter = async (req, res) => {
     try {
-        const flight = req.query;
-        await FlightService.addFlightRouter(flight)
+        console.log(req)
+        // const flight = req.query;
+        const flight = req.body;
+        await FlightService().addFlightRouter(flight)
         res.status(200).json({
             message: "Рейс добавлен"
         })
     }
     catch (err){
         res.status(400).json({
-            message: err
+            message: "Рейс не добавлен"
         })
     }
 

@@ -2,7 +2,7 @@ import Shipment from "../models/ShipmentModel.js";
 
 const findShipment = async (req, res) => {
     const shipment = req.query;
-    let find = await Shipment.findOne({})
+    let find = await Shipment.find({})
     res.status(200).json({
         message: find
     })

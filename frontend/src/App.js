@@ -6,9 +6,10 @@ import './App.css';
 import AppContext from "./context/Context";
 import axios from "axios";
 import { useSelector, useDispatch } from 'react-redux'
-
+import {setInitData} from "../src/redux/features/dragdropSlice";
 
 function App() {
+    const dispatch = useDispatch();
     const [openDraw, setOpenDraw] = useState(true)
     const [coordinates, setCoordinates] = useState([]);
     // const [markerCar, setMarkerCar] = useState([])
@@ -24,6 +25,8 @@ function App() {
     const [activePage, setActivePage] = useState(true)
     const [routeDrop, setRouteDrop] =useState([])
     const [crewDrop, setCrewDrop] = useState([])
+    const [shipment, setShipment] = useState([])
+    const [flightRoute, setFlightRoute] = useState([])
     // const [routeBox, setRouteBox] = useState(coordinates.result)
     // const [crewBox, setCrewBox] = useState(crew.message)
     // const [flightRouteBox, setFlightRouteBox] = useState([])
@@ -32,17 +35,18 @@ function App() {
     // const dispatch = useDispatch();
     // console.dir(dispatch)
     // let testRedux = useSelector( (state) => state)
-    // console.log(testRedux)
-
 
     const getData = async () => {
         try {
             setLoading(false)
 
-            const [routesData , crewdata, flightdata ] = await Promise.all([
+            const [routesData , crewdata, flightdata,shipmentData, flightData ] = await Promise.all([
                 axios.get("http://127.0.0.1:5000/api/createRoute"),
                 axios.get("http://127.0.0.1:5000/api/crew"),
-                axios.get("http://127.0.0.1:5000/api/flightRouter")
+                axios.get("http://127.0.0.1:5000/api/flightRouter"),
+                axios.get("http://127.0.0.1:5000/api/shipment"),
+                axios.get("http://127.0.0.1:5000/api/flightRouter"),
+
             ])
             // const urlMap = "http://127.0.0.1:5000/createRoute";
             // let data = await fetch(urlMap);
@@ -50,6 +54,16 @@ function App() {
             setCoordinates(routesData.data)
             setCrew(crewdata.data)
             setFlightRouter(flightdata.data.message)
+            setShipment(shipmentData.data)
+            setFlightRoute(flightData.data.message)
+            dispatch(setInitData({
+                routeBox: routesData.data.result,
+                crewBox: crewdata.data.message,
+                shipmentBox: shipmentData.data.message,
+                flightRouteBox: [],
+                flightCrewBox: [],
+                flightShipment: []
+            }))
             setLoading(true)
             // setRoutes(await data.json())
         }
@@ -63,7 +77,7 @@ function App() {
     useEffect(() => {
         getData()
     },[])
-
+    console.log(flightRoute)
   return (
       <div className="App">
           <AppContext.Provider value={{coordinates, setCoordinates, loading,

@@ -14,18 +14,12 @@ const Box = (props, datalist) => {
     const dispatch = useDispatch();
     const copyBoxDta = JSON.parse(JSON.stringify(boxData))
 
-    const [item, setItem] = useState([datalist])
-    const {boxes, setBoxes, flightRouteBox, setFlightRouteBox, flightCrewBox, setFlightCrewBox, setRouteDrop,setCrewDrop,swap, setSwap, setCrew, setCrewRoute}  = useContext(AppContext)
-    const [changeItem, setChangeItem] = useState([])
     const drop = (e, dats) => {
         e.preventDefault();
-        console.log(dragdropData)
-        console.dir(props.id)
-        console.log(copyBoxDta[dragdropData.id])
-        const currentItem = copyBoxDta[dragdropData.id].indexOf(dragdropData.initialItem);
-
-        copyBoxDta[dragdropData.id].splice(currentItem, 1);
-        console.log(copyBoxDta)
+        copyBoxDta[dragdropData.id] = copyBoxDta[dragdropData.id].filter( filItem => filItem._id !== dragdropData.initialItem._id)
+        // console.log(find)
+        // const currentItem = copyBoxDta[dragdropData.id].indexOf(dragdropData.initialItem);
+        // copyBoxDta[dragdropData.id].splice(currentItem, 1);
         copyBoxDta[props.id].push(dragdropData.initialItem)
         dispatch(setInitData(copyBoxDta))
         // const card_id = e.dataTransfer.getData("card_id")
@@ -64,33 +58,8 @@ const Box = (props, datalist) => {
     }
 
 
-
-
-
-    const handleDrop = (e) => {
-        // console.log(item)
-        // console.log(e)
-
-        // items.push({label: e.dragData.label, uid: shortid.generate()});
-        // this.setState({items: items});
-        setItem(swap)
-        e.containerElem.style.visibility="hidden";
-    };
-
-
-
-    const swaper = (fromIndex, toIndex, dragData) => {
-        // let items = this.state.items.slice();
-        // const item = {label: dragData.label, uid: shortid.generate()};
-        // items.splice(toIndex, 0, item);
-        // this.setState({items: items});
-    };
-
-
-
     return (
         <div
-            // className="Box"
              className={props.className}
              id={props.id}
              onDrop={(e) => drop(e)}

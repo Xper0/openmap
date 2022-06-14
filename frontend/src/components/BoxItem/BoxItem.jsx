@@ -8,42 +8,65 @@ import {dragData, setDragData} from "../../redux/features/dragdropSlice";
 
 const BoxItem = (props,data) => {
     const dispatch = useDispatch();
-    const {coordinates, setCoordinates, loading, setLoading, crew, setCrew, swap, setSwap}  = useContext(AppContext)
-
+    // const flightRoutId = document.querySelector('#flightRouteBox');
+    // const flightCrewId = document.querySelector('#flightCrewBox');
+    // const flightShipmentId = document.querySelector('#flightShipment');
     const [item, setItem] = useState(data)
-    const handleDrop = (e) => {
-        e.stopPropagation();
-        console.log(e)
-        // setItem(e)
-        setSwap(e.dragData)
-        setItem(swap)
-        // this.props.swap(e.dragData.index, this.props.index, e.dragData);
-        e.containerElem.style.visibility="hidden";
-    };
-    const deleteMe = () => {
-        this.props.kill(this.props.uid);
-    };
+
 
     const Drop = (e) => {
         e.preventDefault();
+
     }
     const dragover = (e) => {
         e.preventDefault();
+
     }
     const dragStart = (e) => {
         const target = e.target
-        console.log(props)
         dispatch(setDragData({
             id: props.id,
             initialItem: props.item
         }))
-        let flightroutId = document.querySelector('#flightCrewBox');
-        flightroutId.style.border = "3px solid green"
-        console.log(flightroutId)
+        const flightRoutId = document.querySelector('#flightRouteBox');
+        const flightCrewId = document.querySelector('#flightCrewBox');
+        const flightShipmentId = document.querySelector('#flightShipment');
+
+        setTimeout(() => {
+            if (props.id === "routeBox") {
+                flightRoutId.style.border = "3px solid green"
+            }
+            if (props.id === "crewBox") {
+                flightCrewId.style.border = "3px solid green"
+            }
+            if (props.id === "shipmentBox") {
+                flightShipmentId.style.border = "3px solid green"
+            }
+        },0)
+        // if (props.id === "routeBox") {
+        //     flightRoutId.style.border = "3px solid green"
+        // }
+        // if (props.id === "crewBox") {
+        //     flightCrewId.style.border = "3px solid green"
+        // }
+        // console.log(props.id)
+        // if (props.id === "shipmentBox") {
+        //     flightShipmentId.style.border = "3px solid green"
+        // }
+
 
         // setTimeout(() => {
         //     target.style.border = "none"
         // }, 0)
+    }
+    const dragEnd = () => {
+        const flightRoutId = document.querySelector('#flightRouteBox');
+        const flightCrewId = document.querySelector('#flightCrewBox');
+        const flightShipmentId = document.querySelector('#flightShipment');
+
+        flightRoutId.style.border = "2px dotted black";
+        flightCrewId.style.border = "2px dotted black";
+        flightShipmentId.style.border = "2px dotted black"
     }
 
     return (
@@ -55,6 +78,7 @@ const BoxItem = (props,data) => {
             onDrop={Drop}
             onDragOver={dragover}
             onDragStart={dragStart}
+            onDragEnd={dragEnd}
         >
             {props.children}
         </div>

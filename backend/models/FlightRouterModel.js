@@ -11,7 +11,7 @@ const flightRouteSchema = new Schema({
     },
     drivers: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Crew",
+        ref: "Crews",
         autopopulate: true
     },
     date: {
@@ -26,7 +26,7 @@ const flightRouteSchema = new Schema({
 
 flightRouteSchema.plugin(mongooseAutoPopulate)
 
-const Flight = mongoose.model("Flight", flightRouteSchema);
+const Flight = mongoose.model("Flights", flightRouteSchema);
 
 
 export default  Flight;

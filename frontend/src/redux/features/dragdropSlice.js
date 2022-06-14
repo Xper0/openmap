@@ -4,6 +4,7 @@ const initialState = {
     initData: {
         routeBox: [],
         crewBox: [],
+
         flightRouteBox: [],
         flightCrewBox: []
     },
