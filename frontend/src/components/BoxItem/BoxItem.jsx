@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import "./boxItem.scss";
+import "../Crew/crew.scss";
 import {DragDropContainer, DropTarget} from "react-drag-drop-container";
 import AppContext from "../../context/Context";
 import {  useDispatch } from 'react-redux'

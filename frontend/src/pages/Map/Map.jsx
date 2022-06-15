@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 import "./map.scss";
-import {MapContainer, TileLayer, useMap, Marker, Popup, GeoJSON, useMapEvents, Polyline} from 'react-leaflet';
+import {MapContainer, TileLayer, useMap, Marker, Popup, GeoJSON, useMapEvents, Polyline,} from 'react-leaflet';
 // import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -15,6 +15,7 @@ import nearestPoint from "@turf/nearest-point";
 import car1 from "../../assets/img/car3.png";
 import carImg from "../../assets/img/number.png";
 import L from "leaflet";
+import Playback from "leaflet-play/Gruntfile";
 import {DragDropContainer, DropTarget} from 'react-drag-drop-container';
 import Box from "../../components/Box/Box";
 import BoxItem from "../../components/BoxItem/BoxItem";
@@ -23,10 +24,16 @@ import AppContext from "../../context/Context";
 import Sidebar from "../../components/SideBar/SideBar";
 import FlightRouter from "../../components/FlightRouter/FlightRouter";
 import Crew from "../../components/Crew/Crew";
+import LeafletReactTrackPlayer from "leaflet-react-track-player";
+import {useSelector} from "react-redux";
+import demo from "leaflet-react-track-player/src/demo2";
+
 
 
 const Map = () => {
     const {activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
+    const  { flightRoute } = useSelector( state => state.mapSlice)
+    console.log(flightRoute)
     // const [activePage, setActivePage] = useState(true)
     // const [coordinates, setCoordinates] = useState([]);
     const [markerCar, setMarkerCar] = useState([])
@@ -183,6 +190,14 @@ const Map = () => {
 
     const styles = {fontSize: 32, fontWeight: 'bold', margin: 20, cursor: 'pointer', float: 'left'};
     const list = [1, 2, 3, 4]
+    console.log(markers)
+    const [path,setPath] = useState([])
+
+
+   let test = [
+       { status: 1, t: "180927072508000", course: 0, lat: 53.22376666666667, lng: 102.745841666666664 },
+       { status: 1, t: "180927072508000", course: 0, lat: 53.22376666666667, lng: 102.745841666666664 },]
+
     return (
         <div className="Map-container">
             <div>
@@ -260,20 +275,36 @@ const Map = () => {
                 {/*    </div>*/}
 
                 {/*</div>*/}
+
                 <div className="Map">
                     <MapContainer
                         center={[58.2300, 100.0187]}
-
                         zoom={8}
                         scrollWheelZoom={true}
                         style={{height: "100%", width: "100%"}}
-
                     >
 
 
-                        {coordinates &&
-                            <GeoJSON data={road} pathOptions={{color: 'blue'}}/>
-                        }
+                        {/*{coordinates &&*/}
+                        {/*    <GeoJSON data={road} pathOptions={{color: 'blue'}}/>*/}
+                        {/*}*/}
+                        {loading && <LeafletReactTrackPlayer
+                            track={demo}
+                            // optionMultyIdxFn={function(p) {
+                            //     return p.status;
+                            // }}
+                            optionsMulty={[
+                                { color: "#b1b1b1" },
+                                { color: "#06a9f5" },
+                                { color: "#202020" },
+                                { color: "#D10B41" },
+                                { color: "#78c800" }
+                            ]}
+                            // // progressFormat={this.state.type}
+                            customMarker={true}
+                            changeCourseCustomMarker={true}
+
+                        />}
 
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -281,53 +312,58 @@ const Map = () => {
                         />
 
                         <MyComponent/>
-                        {markers.length !== 0 && markers.map((marker, index) =>
-                            <Marker
-                                key={index}
-                                position={marker}
-                                draggable={true}
-                                eventHandlers={{
-                                    click: () => {
-                                        console.log('marker clicked')
-                                    },
-                                }}
-                            >
-                                <Popup>First marker
-                                    <button>Удалить</button>
-                                </Popup>
+                        {/*!!*/}
+                        {/*{markers.length !== 0 && markers.map((marker, index) =>*/}
+                        {/*    <Marker*/}
+                        {/*        key={index}*/}
+                        {/*        position={marker}*/}
+                        {/*        draggable={true}*/}
+                        {/*        eventHandlers={{*/}
+                        {/*            click: () => {*/}
+                        {/*                console.log('marker clicked')*/}
+                        {/*            },*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <Popup>First marker*/}
+                        {/*            <button>Удалить</button>*/}
+                        {/*        </Popup>*/}
 
-                            </Marker>
-                        )}
-                        {markerCar.length !== 0 &&
-                            <Marker
-                                position={markerCar[0]}
-                                draggable={true}
-                                icon={myIcon}
-                                eventHandlers={{
-                                    mouseover: (e) => {
-                                        e.target.openPopup()
-                                    },
-                                    mouseout: (e) => {
-                                        e.target.closePopup()
-                                    }
-                                }}
-                            >
-                                <Popup closeOnClick={visible}>
-                                    <div className="popup-info">
-                                        <div className="popup-info__car">
-                                            <span><b>Машина:</b> Ford Mustang</span>
-                                            <span><b>Цвет:</b> Черный</span>
-                                            <span><b>Номер:</b> C430XE</span>
-                                            <img src={carImg} alt="car"/>
-                                        </div>
-                                        <div className="popup-info__driver">
-                                            <span><b>Водитель:</b> Евпатий О.В.</span>
-                                        </div>
-                                    </div>
-                                    {/*<button>Удалить</button>*/}
-                                </Popup>
-                            </Marker>
-                        }
+                        {/*    </Marker>*/}
+                        {/*)}*/}
+                        {/*!!*/}
+                        {/*{markerCar.length !== 0 &&*/}
+                        {/*    <Marker*/}
+                        {/*        position={markerCar[0]}*/}
+                        {/*        draggable={true}*/}
+                        {/*        icon={myIcon}*/}
+                        {/*        eventHandlers={{*/}
+                        {/*            mouseover: (e) => {*/}
+                        {/*                e.target.openPopup()*/}
+                        {/*            },*/}
+                        {/*            mouseout: (e) => {*/}
+                        {/*                e.target.closePopup()*/}
+                        {/*            }*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <Popup closeOnClick={visible}>*/}
+                        {/*            <div className="popup-info">*/}
+                        {/*                <div className="popup-info__car">*/}
+                        {/*                    <span><b>Машина:</b> Ford Mustang</span>*/}
+                        {/*                    <span><b>Цвет:</b> Черный</span>*/}
+                        {/*                    <span><b>Номер:</b> C430XE</span>*/}
+                        {/*                    <img src={carImg} alt="car"/>*/}
+                        {/*                </div>*/}
+                        {/*                <div className="popup-info__driver">*/}
+                        {/*                    <span><b>Водитель:</b> Евпатий О.В.</span>*/}
+                        {/*                </div>*/}
+                        {/*            </div>*/}
+                        {/*            /!*<button>Удалить</button>*!/*/}
+                        {/*        </Popup>*/}
+                        {/*    </Marker>*/}
+                        {/*}*/}
+
+
+
                         {/*{markerCar.length !== 0 && markerCar.map((marker,index) =>*/}
                         {/*    <Marker*/}
                         {/*        key={index}*/}
@@ -359,7 +395,32 @@ const Map = () => {
 
                         {/*    </Polyline>*/}
                         {/*})}*/}
-                        {polyline.length !== 0 && <Polyline positions={polyline} color="red"/>}
+                        {/*!!*/}
+                        {/*{flightRoute.length && flightRoute.map( (poly,index) =>*/}
+                        {/*    <>*/}
+                        {/*        <Polyline key={poly._id} color="red" positions={poly.router.coordinates}/>*/}
+                        {/*        {poly.router.coordinates.map( (path,index) =>*/}
+                        {/*               <Marker*/}
+                        {/*                    key={index}*/}
+                        {/*                    position={path}*/}
+                        {/*                    draggable={true}*/}
+                        {/*                    icon={myIcon}*/}
+                        {/*                    eventHandlers={{*/}
+                        {/*                        mouseover: (e) => {*/}
+                        {/*                            e.target.openPopup()*/}
+                        {/*                        },*/}
+                        {/*                        mouseout: (e) => {*/}
+                        {/*                            e.target.closePopup()*/}
+                        {/*                        }*/}
+                        {/*                    }}*/}
+                        {/*                >*/}
+                        {/*                </Marker>*/}
+                        {/*        )}*/}
+                        {/*    </>*/}
+                        {/*)}*/}
+                        {/*{flightRoute[0].router.coordinates.map( item=> console.log(item))}*/}
+                        {/*!!*/}
+                        {/*{polyline.length !== 0 && <Polyline positions={polyline} color="red"/>}*/}
                         {/*<Polyline positions={pos} color="red" />*/}
 
                         {/*<Marker position={[40.8054, -74.0241]} draggable={true}>*/}

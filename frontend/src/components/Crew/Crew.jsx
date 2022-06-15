@@ -5,6 +5,9 @@ import AppContext from "../../context/Context";
 import "./crew.scss";
 import { useSelector, useDispatch } from 'react-redux'
 import {setInitData} from "../../redux/features/dragdropSlice";
+import MapIcon from '@mui/icons-material/Map';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 import road from "../../assets/roades.json";
 import point from "turf-point";
@@ -12,9 +15,10 @@ import nearestPoint from "@turf/nearest-point";
 import PathFinder from "geojson-path-finder";
 import axios from "axios";
 import {Button} from "@mui/material";
+import {setFlightRoute} from "../../redux/features/mapSlice";
 
 const Crew = () => {
-    const {setFlightCrewBoxrouteDrop, setRouteDrop,crewDrop, setCrewDrop,activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew}  = useContext(AppContext)
+    const {setFetching,setFlightCrewBoxrouteDrop, setRouteDrop,crewDrop, setCrewDrop,activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew}  = useContext(AppContext)
     const dispatch = useDispatch();
     let boxData = useSelector( (state) => state.dragdropSlice.initData)
     const copyBoxDta = JSON.parse(JSON.stringify(boxData))
@@ -204,15 +208,16 @@ const Crew = () => {
         setDragData({ id: id, initialItem: item });
     }
     const saveData = async () => {
-      if((boxData.flightCrewBox.length && boxData.flightRouteBox.length && boxData.flightShipment.length) !== 0){
+      if((boxData.flightCrewBox.length && boxData.flightRouteBox.length) !== 0){
          let obj = {
              router: boxData.flightRouteBox[0]._id,
              drivers: boxData.flightCrewBox[0]._id,
              date: new Date(),
-             shipment: boxData.flightShipment[0]._id
+             // shipment: boxData.flightShipment[0]._id
          }
           const {data} = await axios.post("http://127.0.0.1:5000/api/flightRouter", obj)
           console.log(data.message)
+          setFetching(true)
           window.alert("Новый рейс создан")
       }
       else {
@@ -296,98 +301,116 @@ const Crew = () => {
                                 </BoxItem>
                             )}
                     </Box>
-                    <Box className="box" id="shipmentBox" title={"Груз"}>
-                        {boxData.shipmentBox && boxData.shipmentBox.map((shipmentItem,i) =>
-                            <BoxItem
-                                key={shipmentItem._id}
-                                className="BoxItem"
-                                id={"shipmentBox"}
-                                item={shipmentItem}
-                            >
-                                {shipmentItem.shipment.map( (ship,i) =>
-                                    <div key={i} className="BoxDrag" >
-                                        <h3>{ship.name}</h3>
-                                        <span>{ship.weight}</span>
-                                        {ship.producer &&
-                                            <span>{ship.producer}</span>
-                                        }
-                                    </div>
-                                )}
-                            </BoxItem>
-                        )}
-                    </Box>
+                    {/*<Box className="box" id="shipmentBox" title={"Груз"}>*/}
+                    {/*    {boxData.shipmentBox && boxData.shipmentBox.map((shipmentItem,i) =>*/}
+                    {/*        <BoxItem*/}
+                    {/*            key={shipmentItem._id}*/}
+                    {/*            className="BoxItem"*/}
+                    {/*            id={"shipmentBox"}*/}
+                    {/*            item={shipmentItem}*/}
+                    {/*        >*/}
+                    {/*            {shipmentItem.shipment.map( (ship,i) =>*/}
+                    {/*                <div key={i} className="BoxDrag" >*/}
+                    {/*                    <h3>{ship.name}</h3>*/}
+                    {/*                    <span>{ship.weight}</span>*/}
+                    {/*                    {ship.producer &&*/}
+                    {/*                        <span>{ship.producer}</span>*/}
+                    {/*                    }*/}
+                    {/*                </div>*/}
+                    {/*            )}*/}
+                    {/*        </BoxItem>*/}
+                    {/*    )}*/}
+                    {/*</Box>*/}
 
                     <div className="drag-result">
                         <div className="drag-container">
                             <div className="header">
-                                <h2>Рейс</h2>
+                                <h3>Рейс</h3>
                             </div>
                             <div className="content">
                                 <div className="content_router">
-                                    <h5>Маршрут</h5>
+                                    {/*<h5>Маршрут</h5>*/}
                                     <Box id="flightRouteBox" className="box_router">
                                         {/*{boxData.flightRouteBox}*/}
-                                        {boxData.flightRouteBox && boxData.flightRouteBox.map((routeItem,i) =>
-                                            <BoxItem
-                                                key={i}
-                                                className="BoxItem"
-                                                id={"flightRouteBox"}
-                                                item={routeItem}
-                                            >
-                                                <h3>{routeItem.titleRoute}</h3>
-                                            </BoxItem>
-                                        )}
+                                        {boxData.flightRouteBox.length === 0 ?
+                                            <div className="box-router_preload">
+                                                <MapIcon fontSize="large" color="action"/>
+                                                <h2 className="box-router_title">Перетащи маршрут</h2>
+                                            </div> :
+                                            (
+                                                boxData.flightRouteBox && boxData.flightRouteBox.map((routeItem, i) =>
+                                                    <BoxItem
+                                                        key={i}
+                                                        className="BoxItem"
+                                                        id={"flightRouteBox"}
+                                                        item={routeItem}
+                                                    >
+                                                        <h3>{routeItem.titleRoute}</h3>
+                                                    </BoxItem>
+                                                )
+                                            )
+                                        }
                                     </Box>
                                 </div>
                                 <div className="content_crew">
-                                    <h5>Экипаж</h5>
+                                    {/*<h5>Экипаж</h5>*/}
                                     <Box id="flightCrewBox" className="box_crew">
                                         {/*{boxData.flightCrewBox}*/}
-                                        {boxData.flightCrewBox && boxData.flightCrewBox.map((crewItem,i) => crewItem.drivers.length !== 0 ?
-                                            <BoxItem
-                                                key={i}
-                                                className="BoxItem"
-                                                id={"flightCrewBox"}
-                                                item={crewItem}
-                                            >
-                                                {crewItem.drivers.map((driver) =>
-                                                    <div key={driver.firstName}  className="BoxDrag"  >
-                                                        <h3>{`${driver.firstName} ${driver.secondName} ${driver.middleName}`}</h3>
-                                                        <span>{driver.job_position}</span>
-                                                        <span>{crewItem.vehicle.license_number}</span>
-                                                        <span>{crewItem.vehicle.type_vehicle}</span>
-                                                        <span>{crewItem.vehicle.wear_vehicle}</span>
-                                                    </div>)
 
-                                                }
-                                            </BoxItem> : null
-                                        )}
-                                    </Box>
-                                </div>
-                                <div className="content_router">
-                                    <h5>Груз</h5>
-                                    <Box id="flightShipment" className="box_router">
-                                        {/*{boxData.flightRouteBox}*/}
-                                        {boxData.flightShipment && boxData.flightShipment.map((shipmentItem,i) =>
-                                            <BoxItem
-                                                key={i}
-                                                className="BoxItem"
-                                                id={"flightShipment"}
-                                                item={shipmentItem}
-                                            >
-                                                {shipmentItem.shipment.map( (ship,i) =>
-                                                    <div key={i} className="BoxDrag" >
-                                                        <h3>{ship.name}</h3>
-                                                        <span>{ship.weight}</span>
-                                                        {ship.producer &&
-                                                            <span>{ship.producer}</span>
+
+                                        {boxData.flightCrewBox.length === 0 ?
+                                            <div className="box-router_preload">
+                                                <DirectionsCarIcon fontSize="large" color="action"/>
+                                                <PersonAddIcon fontSize="large" color="action"/>
+                                                <h2 className="box-router_title">Перетащи экипаж</h2>
+                                            </div> :
+                                            (boxData.flightCrewBox && boxData.flightCrewBox.map((crewItem, i) => crewItem.drivers.length !== 0 ?
+                                                    <BoxItem
+                                                        key={i}
+                                                        className="BoxItem"
+                                                        id={"flightCrewBox"}
+                                                        item={crewItem}
+                                                    >
+                                                        {crewItem.drivers.map((driver) =>
+                                                            <div key={driver.firstName} className="BoxDrag">
+                                                                <h3>ФИО: {`${driver.firstName} ${driver.secondName} ${driver.middleName}`}</h3>
+                                                                <span>Должность: {driver.job_position}</span>
+                                                                <span>Гос.номер: {crewItem.vehicle.license_number}</span>
+                                                                <span>Тип: {crewItem.vehicle.type_vehicle}</span>
+                                                                <span>Износ: {crewItem.vehicle.wear_vehicle}</span>
+                                                            </div>)
+
                                                         }
-                                                    </div>
-                                                )}
-                                            </BoxItem>
-                                        )}
+                                                    </BoxItem> : null
+                                                )
+                                            )
+                                        }
                                     </Box>
                                 </div>
+                                {/*<div className="content_router">*/}
+                                {/*    <h5>Груз</h5>*/}
+                                {/*    <Box id="flightShipment" className="box_router">*/}
+                                {/*        /!*{boxData.flightRouteBox}*!/*/}
+                                {/*        {boxData.flightShipment && boxData.flightShipment.map((shipmentItem,i) =>*/}
+                                {/*            <BoxItem*/}
+                                {/*                key={i}*/}
+                                {/*                className="BoxItem"*/}
+                                {/*                id={"flightShipment"}*/}
+                                {/*                item={shipmentItem}*/}
+                                {/*            >*/}
+                                {/*                {shipmentItem.shipment.map( (ship,i) =>*/}
+                                {/*                    <div key={i} className="BoxDrag" >*/}
+                                {/*                        <h3>{ship.name}</h3>*/}
+                                {/*                        <span>{ship.weight}</span>*/}
+                                {/*                        {ship.producer &&*/}
+                                {/*                            <span>{ship.producer}</span>*/}
+                                {/*                        }*/}
+                                {/*                    </div>*/}
+                                {/*                )}*/}
+                                {/*            </BoxItem>*/}
+                                {/*        )}*/}
+                                {/*    </Box>*/}
+                                {/*</div>*/}
 
                             </div>
                         </div>
@@ -401,12 +424,33 @@ const Crew = () => {
                                 item={crewItem}
                             >
                                 {crewItem.drivers.map((driver) =>
-                                    <div key={driver.firstName}  className="BoxDrag"  >
-                                        <h3>{`${driver.firstName} ${driver.secondName} ${driver.middleName}`}</h3>
-                                        <span>{driver.job_position}</span>
-                                        <span>{crewItem.vehicle.license_number}</span>
-                                        <span>{crewItem.vehicle.type_vehicle}</span>
-                                        <span>{crewItem.vehicle.wear_vehicle}</span>
+                                    <div key={driver.firstName} className="BoxDrag">
+                                        <li>
+                                            <span>ФИО:</span>
+                                            <span>{`${driver.secondName} ${driver.firstName.substr(0, 1)}.${driver.middleName.substr(0, 1)}.`}</span>
+                                        </li>
+                                        <li>
+                                            <span>Должность:</span>
+                                            <span>{driver.job_position}</span>
+                                        </li>
+
+                                        <li>
+                                            <span>Гос.номер:</span>
+                                            <span>{crewItem.vehicle.license_number}</span>
+                                        </li>
+                                        <li>
+                                            <span>Тип:</span>
+                                            <span>{crewItem.vehicle.type_vehicle}</span>
+                                        </li>
+                                        <li>
+                                            <span>Износ:</span>
+                                            <span>{crewItem.vehicle.wear_vehicle}%</span>
+                                        </li>
+                                        {/*<span>ФИО: {`${driver.secondName} ${driver.firstName.substr(0,1)}.${driver.middleName.substr(0,1)}.`}</span>*/}
+                                        {/*<span>Должность: {driver.job_position}</span>*/}
+                                        {/*<span>Гос.номер: {crewItem.vehicle.license_number}</span>*/}
+                                        {/*<span>Тип: {crewItem.vehicle.type_vehicle}</span>*/}
+                                        {/*<span>Износ: {crewItem.vehicle.wear_vehicle}%</span>*/}
                                     </div>)
 
                                 }
@@ -557,7 +601,7 @@ const Crew = () => {
                     {/*</div>*/}
                     {/*}*/}
                 </div>
-                <div>
+                <div className="Crew-footer">
                     {/*<button onClick={() => saveData()}>Сохранить</button>*/}
                     <Button
                         variant="contained"

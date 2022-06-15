@@ -17,6 +17,8 @@
     "geojson-path-finder": "1.4.2",
     "leaflet": "^1.8.0",
     "leaflet-defaulticon-compatibility": "^0.1.1",
+    "leaflet-play": "^0.4.4",
+    "leaflet-react-track-player": "^2.0.0",
     "npm-sass": "^3.1.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

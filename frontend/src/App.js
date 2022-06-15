@@ -7,9 +7,12 @@ import AppContext from "./context/Context";
 import axios from "axios";
 import { useSelector, useDispatch } from 'react-redux'
 import {setInitData} from "../src/redux/features/dragdropSlice";
+import {setFlightRoute} from "../src/redux/features/mapSlice";
 
 function App() {
     const dispatch = useDispatch();
+    // const flightRoute = useSelector( state => state.mapSlice)
+
     const [openDraw, setOpenDraw] = useState(true)
     const [coordinates, setCoordinates] = useState([]);
     // const [markerCar, setMarkerCar] = useState([])
@@ -26,7 +29,9 @@ function App() {
     const [routeDrop, setRouteDrop] =useState([])
     const [crewDrop, setCrewDrop] = useState([])
     const [shipment, setShipment] = useState([])
-    const [flightRoute, setFlightRoute] = useState([])
+    const [fetching, setFetching] = useState(false)
+    const { flightRoute } = useSelector( state => state.mapSlice)
+    // const [flightRoute, setFlightRoute] = useState([])
     // const [routeBox, setRouteBox] = useState(coordinates.result)
     // const [crewBox, setCrewBox] = useState(crew.message)
     // const [flightRouteBox, setFlightRouteBox] = useState([])
@@ -64,6 +69,7 @@ function App() {
                 flightCrewBox: [],
                 flightShipment: []
             }))
+            dispatch(setFlightRoute(flightData.data.message))
             setLoading(true)
             // setRoutes(await data.json())
         }
@@ -77,13 +83,24 @@ function App() {
     useEffect(() => {
         getData()
     },[])
-    console.log(flightRoute)
+    // useEffect(() => {
+    //     (async () => {
+    //         if (fetching) {
+    //             const [flightData ] = await Promise.all([
+    //                 axios.get("http://127.0.0.1:5000/api/flightRouter"),
+    //             ])
+    //             dispatch(setFlightRoute(flightData.data.message))
+    //             setFetching(false)
+    //         }
+    //     } )()
+    // },[flightRoute])
+
   return (
       <div className="App">
           <AppContext.Provider value={{coordinates, setCoordinates, loading,
               setLoading, crew, setCrew, swap, setSwap,crewRoute, setCrewRoute,openDraw, setOpenDraw,
               flightRouter, setFlightRouter, activePage, setActivePage, routeDrop, setRouteDrop,
-              crewDrop, setCrewDrop
+              crewDrop, setCrewDrop,fetching, setFetching
           }}>
               <Routes>
                   <Route path="/" element={<Home/>}/>

@@ -60,7 +60,7 @@ const Box = (props, datalist) => {
 
     return (
         <div
-             className={props.className}
+             className={`${props.className} box-container`}
              id={props.id}
              onDrop={(e) => drop(e)}
              onDragStart={(e) => DragStart(e)}
