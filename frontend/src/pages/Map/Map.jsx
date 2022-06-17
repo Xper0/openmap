@@ -1,6 +1,7 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import "./map.scss";
-import {MapContainer, TileLayer, useMap, Marker, Popup, GeoJSON, useMapEvents, Polyline,} from 'react-leaflet';
+import {MapContainer, TileLayer, useMap, Popup, GeoJSON,Marker, useMapEvents, Polyline,} from 'react-leaflet';
+// import Marker from 'react-leaflet-animated-marker';
 // import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -25,15 +26,16 @@ import Sidebar from "../../components/SideBar/SideBar";
 import FlightRouter from "../../components/FlightRouter/FlightRouter";
 import Crew from "../../components/Crew/Crew";
 import LeafletReactTrackPlayer from "leaflet-react-track-player";
-import {useSelector} from "react-redux";
 import demo from "leaflet-react-track-player/src/demo2";
+import {setFlightRoute} from "../../redux/features/mapSlice";
+import { useSelector, useDispatch } from 'react-redux'
 
-
-
+let TimerCounter = 0
 const Map = () => {
-    const {activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
+    const {activePage, fetching, setFetching, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
+
     const  { flightRoute } = useSelector( state => state.mapSlice)
-    console.log(flightRoute)
+    const dispatch = useDispatch();
     // const [activePage, setActivePage] = useState(true)
     // const [coordinates, setCoordinates] = useState([]);
     const [markerCar, setMarkerCar] = useState([])
@@ -44,6 +46,8 @@ const Map = () => {
     const [routeValue, setRouteValue] = useState("")
     // const [crew, setCrew] = useState([])
     const pointsReroute = explode(road);
+    let copyflightRoute = JSON.parse(JSON.stringify(flightRoute))
+    // const [test,setTest] = useState(fetching)
     const MyComponent = () => {
         const map = useMapEvents({
             click(e) {
@@ -60,34 +64,80 @@ const Map = () => {
             },
 
         })
+
+        useEffect(() => {
+
+            if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
+                let timerRef;
+                // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
+                timerRef = setInterval(setMarkerMachine, 4000)
+
+                // let timerRef= setInterval(() => {
+                //
+                //         setPathMarker(flightRoute[0].router.coordinates[i])
+                //     setCounter(prev => prev + 1)
+                //         // i++
+                //
+                //
+                //     }
+                //     ,100)
+                return () => {
+                    clearInterval(timerRef)
+                }
+            }
+
+        }, [counter])
+
+    }
+
+    const reloadPage = async () => {
+        const [flightData] = await Promise.all([
+            axios.get("http://127.0.0.1:5000/api/flightRouter"),
+        ])
+        await dispatch(setFlightRoute(flightData.data.message))
     }
 
 
-    const showPath = () => {
-        var pointList = [];
-        console.log(road)
-        for (let i = 1; i < markers.length; i++) {
-            let start = point(markers[i - 1].reverse());
-            let end = point(markers[i].reverse());
-
-            let startInNetwork = nearestPoint(start, pointsReroute);
-            let endInNetwork = nearestPoint(end, pointsReroute);
-
-            let pathFinder = new PathFinder(road);
-
-            let path = pathFinder.findPath(startInNetwork, endInNetwork);
-            // console.log(path)
-            // path.path.map( (item,index,array) => {
-            //     item.reverse()
-            // });
-            let pathes = path.path.map(item => item.reverse())
-
-            setPolyline(path.path)
-            setMarkerCar(path.path)
-
-            // setPolyline(pointList)
-            // console.log(pointList);
+    useEffect(() => {
+        try {
+            console.log(fetching)
+            if (fetching === true){
+                reloadPage()
+               setFetching(false)
+            }
+        }catch (err) {
+            console.log(err)
         }
+    },[fetching])
+
+
+
+
+    // const showPath = () => {
+    //     var pointList = [];
+    //     console.log(road)
+    //     for (let i = 1; i < markers.length; i++) {
+    //         let start = point(markers[i - 1].reverse());
+    //         let end = point(markers[i].reverse());
+    //
+    //         let startInNetwork = nearestPoint(start, pointsReroute);
+    //         let endInNetwork = nearestPoint(end, pointsReroute);
+    //
+    //         let pathFinder = new PathFinder(road);
+    //
+    //         let path = pathFinder.findPath(startInNetwork, endInNetwork);
+    //         // console.log(path)
+    //         // path.path.map( (item,index,array) => {
+    //         //     item.reverse()
+    //         // });
+    //         let pathes = path.path.map(item => item.reverse())
+    //
+    //         setPolyline(path.path)
+    //         setMarkerCar(path.path)
+    //
+    //         // setPolyline(pointList)
+    //         // console.log(pointList);
+    //     }
 
         // let test =  pointsReroute.features.filter( geometry => console.log(geometry.geometry.coordinates[102.8744183537535, 57.9010197408066]))
         // let start = road.features.filter( geometry => geometry.geometry.coordinates.includes(markers[0].reverse()))
@@ -96,31 +146,31 @@ const Map = () => {
         // console.log(finish)
         // let path = pathFinder.findPath(start, finish);
         // console.log(path)
-    }
+    // }
 
-    const createAutoRoute = async () => {
-        if (markers.length >= 2) {
-            markers.map(arr => arr.reverse());
-            let rec = (array) => array.reduce((acc, val) => Array.isArray(val) ? acc.concat(rec(val)) : acc.concat(val), [])
-            let res = rec(markers)
-            let newArr = res.map((pos, index) => index % 2 === 1 ? `${pos.toString().substr(0, 9)};` : pos.toString().substr(0, 9) + ",")
-            let coords = newArr.join("").slice(0, -1);
-            let urlPosition = `https://router.project-osrm.org/route/v1/car/${coords}?steps=true&overview=simplified&geometries=geojson`;
-            let data = await fetch(urlPosition);
-            let coodinates = await data.json();
-            let getRoutes = coodinates.routes[0].geometry.coordinates;
-            getRoutes.map(item => {
-                item.reverse()
-            });
-            setPolyline(getRoutes)
-        } else {
-            window.alert("Недостаточно точек для построения маршрута")
-        }
-    }
-    const clearMap = () => {
-        setMarker([])
-        setPolyline([])
-    }
+    // const createAutoRoute = async () => {
+    //     if (markers.length >= 2) {
+    //         markers.map(arr => arr.reverse());
+    //         let rec = (array) => array.reduce((acc, val) => Array.isArray(val) ? acc.concat(rec(val)) : acc.concat(val), [])
+    //         let res = rec(markers)
+    //         let newArr = res.map((pos, index) => index % 2 === 1 ? `${pos.toString().substr(0, 9)};` : pos.toString().substr(0, 9) + ",")
+    //         let coords = newArr.join("").slice(0, -1);
+    //         let urlPosition = `https://router.project-osrm.org/route/v1/car/${coords}?steps=true&overview=simplified&geometries=geojson`;
+    //         let data = await fetch(urlPosition);
+    //         let coodinates = await data.json();
+    //         let getRoutes = coodinates.routes[0].geometry.coordinates;
+    //         getRoutes.map(item => {
+    //             item.reverse()
+    //         });
+    //         setPolyline(getRoutes)
+    //     } else {
+    //         window.alert("Недостаточно точек для построения маршрута")
+    //     }
+    // }
+    // const clearMap = () => {
+    //     setMarker([])
+    //     setPolyline([])
+    // }
     //
     // const start = {
     //     type: "Feature",
@@ -162,24 +212,24 @@ const Map = () => {
     //
     //     // let result = await data.json();
     // }
-    const handleChange = (e) => {
-        let selected = e.target.value;
-        let marker = [selected[0], selected[selected.length - 1]]
-        setPolyline(selected)
-        setMarker(marker)
-    }
+    // const handleChange = (e) => {
+    //     let selected = e.target.value;
+    //     let marker = [selected[0], selected[selected.length - 1]]
+    //     setPolyline(selected)
+    //     setMarker(marker)
+    // }
 
     // useEffect(() => {
     //     getData()
     // },[])
 
-    var myIcon = L.icon({
+    let myIcon = L.icon({
         className: "car__icon",
         iconUrl: car1,
         // iconRetinaUrl: 'my-icon@2x.png',
-        iconSize: [50, 50],
-        // iconAnchor: [22, 94],
-        // popupAnchor: [-3, -76],
+        iconSize: [45, 45],
+        // iconAnchor: [0, 0],
+        // popupAnchor: [0, 0],
         // shadowUrl: 'my-icon-shadow.png',
         // shadowRetinaUrl: 'my-icon-shadow@2x.png',
         // shadowSize: [68, 95],
@@ -190,14 +240,108 @@ const Map = () => {
 
     const styles = {fontSize: 32, fontWeight: 'bold', margin: 20, cursor: 'pointer', float: 'left'};
     const list = [1, 2, 3, 4]
-    console.log(markers)
-    const [path,setPath] = useState([])
 
 
-   let test = [
-       { status: 1, t: "180927072508000", course: 0, lat: 53.22376666666667, lng: 102.745841666666664 },
-       { status: 1, t: "180927072508000", course: 0, lat: 53.22376666666667, lng: 102.745841666666664 },]
 
+    // flightRoute[0].length !==0 flightRoute[0].router.coordinates.map( (coordinatez,index) =>
+    //         // {console.log(flightRoute[0].router.coordinates)}
+    //         //     console.dir(coordinatez)
+    //         setPathMarker(coordinatez)
+    //     // setTimeout( () => setPathMarker(coordinatez),10000* index)
+    // )
+    // console.log(pathMarker)
+
+    const [loadMarkers, setLoadMarkers] = useState(false)
+    const [pathMarker,setPathMarker] = useState([])
+    const [crewInfo, setCrewInfo] = useState([])
+    let [counter, setCounter] = useState(0)
+
+
+
+     async function  setMarkerMachine () {
+         // TimerCounter++
+         // console.log(TimerCounter)
+         flightRoute.forEach(item => {
+                 if (counter <  item.router.coordinates.length) {
+                     setPathMarker(item.router.coordinates[counter])
+                     setCrewInfo(item)
+                     setCounter(prev => prev + 1)
+                 }else {
+                      setCounter(0)
+                     // clearInterval(timerRef)
+                 }
+             }
+         )
+         // const res = await Promise.all(flightRoute.map(async (item,index) => {
+         //     if (counter <  item.router.coordinates.length) {
+         //         setPathMarker(item.router.coordinates[counter])
+         //         setCrewInfo(item)
+         //         setCounter(prev => prev + 1)
+         //     }else {
+         //         await setCounter(0)
+         //     }
+         //     }
+         //     ));
+        //  console.log(res,res2)
+        // setCounter(prev => prev + 1)
+        // // flightRoute[0].router.coordinates.forEach( (item,index) => setCounter(index))
+        // setPathMarker(flightRoute[0].router.coordinates[counter])
+        //  flightRoute.forEach(  (flight,index) => {
+        //     setCounter(prev => prev + 1)
+        //      setPathMarker(flightRoute[index].router.coordinates[counter])
+        // })
+        // if (counter < flightRoute[0].router.coordinates.length){
+        //     setCounter(prev => prev + 1)
+        //     setPathMarker(flightRoute[0].router.coordinates[counter])
+        // }
+        // else {
+        //     setCounter(0)
+        // }
+
+        // flightRoute[0].router.coordinates.forEach( (item,index) =>
+        //     {
+        //         setPathMarker(item)
+        //     }
+        // )
+    }
+
+    // useEffect(() => {
+    //     if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
+    //        let timerRef = setInterval(setMarkerMachine, 4000)
+    //         // let timerRef= setInterval(() => {
+    //         //
+    //         //         setPathMarker(flightRoute[0].router.coordinates[i])
+    //         //     setCounter(prev => prev + 1)
+    //         //         // i++
+    //         //
+    //         //
+    //         //     }
+    //         //     ,100)
+    //         return () => {
+    //             clearInterval(timerRef)
+    //         }
+    //     }
+    //
+    // }, [counter])
+
+    const optionMap = (map) => {
+        // console.log(map)
+    }
+    const markerRef = useRef();
+
+    function showMarker(items) {
+
+        return items
+    }
+
+
+
+
+    // let interval = setInterval(changeCoord,4000)
+    // useEffect(() => {
+    //    let interval = setInterval(changeCoord,4000)
+    //     // clearInterval(interval)
+    // })
     return (
         <div className="Map-container">
             <div>
@@ -281,30 +425,16 @@ const Map = () => {
                         center={[58.2300, 100.0187]}
                         zoom={8}
                         scrollWheelZoom={true}
+                        ref={optionMap}
                         style={{height: "100%", width: "100%"}}
                     >
 
 
-                        {/*{coordinates &&*/}
-                        {/*    <GeoJSON data={road} pathOptions={{color: 'blue'}}/>*/}
-                        {/*}*/}
-                        {loading && <LeafletReactTrackPlayer
-                            track={demo}
-                            // optionMultyIdxFn={function(p) {
-                            //     return p.status;
-                            // }}
-                            optionsMulty={[
-                                { color: "#b1b1b1" },
-                                { color: "#06a9f5" },
-                                { color: "#202020" },
-                                { color: "#D10B41" },
-                                { color: "#78c800" }
-                            ]}
-                            // // progressFormat={this.state.type}
-                            customMarker={true}
-                            changeCourseCustomMarker={true}
 
-                        />}
+                        {coordinates &&
+                            <GeoJSON data={road} pathOptions={{color: 'blue'}}/>
+                        }
+
 
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -312,80 +442,81 @@ const Map = () => {
                         />
 
                         <MyComponent/>
-                        {/*!!*/}
-                        {/*{markers.length !== 0 && markers.map((marker, index) =>*/}
-                        {/*    <Marker*/}
-                        {/*        key={index}*/}
-                        {/*        position={marker}*/}
-                        {/*        draggable={true}*/}
-                        {/*        eventHandlers={{*/}
-                        {/*            click: () => {*/}
-                        {/*                console.log('marker clicked')*/}
-                        {/*            },*/}
-                        {/*        }}*/}
-                        {/*    >*/}
-                        {/*        <Popup>First marker*/}
-                        {/*            <button>Удалить</button>*/}
-                        {/*        </Popup>*/}
+                        {markers.length !== 0 && markers.map((marker, index) =>
+                            <Marker
+                                key={index}
+                                position={marker}
+                                draggable={true}
+                                eventHandlers={{
+                                    click: () => {
+                                        console.log('marker clicked')
+                                    },
+                                }}
+                            >
+                                <Popup>First marker
+                                    <button>Удалить</button>
+                                </Popup>
 
-                        {/*    </Marker>*/}
-                        {/*)}*/}
-                        {/*!!*/}
-                        {/*{markerCar.length !== 0 &&*/}
-                        {/*    <Marker*/}
-                        {/*        position={markerCar[0]}*/}
-                        {/*        draggable={true}*/}
-                        {/*        icon={myIcon}*/}
-                        {/*        eventHandlers={{*/}
-                        {/*            mouseover: (e) => {*/}
-                        {/*                e.target.openPopup()*/}
-                        {/*            },*/}
-                        {/*            mouseout: (e) => {*/}
-                        {/*                e.target.closePopup()*/}
-                        {/*            }*/}
-                        {/*        }}*/}
-                        {/*    >*/}
-                        {/*        <Popup closeOnClick={visible}>*/}
-                        {/*            <div className="popup-info">*/}
-                        {/*                <div className="popup-info__car">*/}
-                        {/*                    <span><b>Машина:</b> Ford Mustang</span>*/}
-                        {/*                    <span><b>Цвет:</b> Черный</span>*/}
-                        {/*                    <span><b>Номер:</b> C430XE</span>*/}
-                        {/*                    <img src={carImg} alt="car"/>*/}
-                        {/*                </div>*/}
-                        {/*                <div className="popup-info__driver">*/}
-                        {/*                    <span><b>Водитель:</b> Евпатий О.В.</span>*/}
-                        {/*                </div>*/}
-                        {/*            </div>*/}
-                        {/*            /!*<button>Удалить</button>*!/*/}
-                        {/*        </Popup>*/}
-                        {/*    </Marker>*/}
-                        {/*}*/}
+                            </Marker>
+                        )}
 
+                        {markerCar.length !== 0 &&
+                            <Marker
+                                position={markerCar[0]}
+                                draggable={true}
+                                icon={myIcon}
+                                eventHandlers={{
+                                    mouseover: (e) => {
+                                        e.target.openPopup()
+                                    },
+                                    mouseout: (e) => {
+                                        e.target.closePopup()
+                                    }
+                                }}
+                            >
+                                <Popup closeOnClick={visible}>
+                                    <div className="popup-info">
+                                        <div className="popup-info__car">
+                                            <span><b>Машина:</b> Ford Mustang</span>
+                                            <span><b>Цвет:</b> Черный</span>
+                                            <span><b>Номер:</b> C430XE</span>
+                                            <img src={carImg} alt="car"/>
+                                        </div>
+                                        <div className="popup-info__driver">
+                                            <span><b>Водитель:</b> Евпатий О.В.</span>
+                                        </div>
+                                    </div>
+                                    {/*<button>Удалить</button>*/}
+                                </Popup>
+                            </Marker>
+                        }
 
 
-                        {/*{markerCar.length !== 0 && markerCar.map((marker,index) =>*/}
-                        {/*    <Marker*/}
-                        {/*        key={index}*/}
-                        {/*        position={marker}*/}
-                        {/*        draggable={true}*/}
-                        {/*        // icon={car1}*/}
-                        {/*        eventHandlers={{*/}
-                        {/*            click: () => {*/}
-                        {/*                console.log('marker clicked')*/}
-                        {/*            },*/}
-                        {/*        }}*/}
-                        {/*    >*/}
-                        {/*        <Popup>*/}
-                        {/*            <div>*/}
-                        {/*                <h1>Машина: FordMustang</h1>*/}
-                        {/*                <span>Цвет: Зеленый</span>*/}
-                        {/*            </div>*/}
-                        {/*            <button>Удалить</button>*/}
-                        {/*        </Popup>*/}
 
-                        {/*    </Marker>*/}
-                        {/*)}*/}
+                        {markerCar.length !== 0 && markerCar.map((marker,index) =>
+                            <Marker
+                                key={index}
+                                position={marker}
+                                draggable={true}
+                                // icon={car1}
+                                eventHandlers={{
+                                    click: () => {
+                                        console.log('marker clicked')
+                                    },
+                                }}
+                            >
+                                <Popup>
+                                    <div>
+                                        <h1>Машина: FordMustang</h1>
+                                        <span>Цвет: Зеленый</span>
+                                    </div>
+                                    <button>Удалить</button>
+                                </Popup>
+
+                            </Marker>
+                        )}
+
+
                         {/*{polyline.map( (poly,index) => {*/}
                         {/*    <Polyline*/}
                         {/*        key={index}*/}
@@ -395,32 +526,118 @@ const Map = () => {
 
                         {/*    </Polyline>*/}
                         {/*})}*/}
-                        {/*!!*/}
-                        {/*{flightRoute.length && flightRoute.map( (poly,index) =>*/}
-                        {/*    <>*/}
-                        {/*        <Polyline key={poly._id} color="red" positions={poly.router.coordinates}/>*/}
-                        {/*        {poly.router.coordinates.map( (path,index) =>*/}
-                        {/*               <Marker*/}
-                        {/*                    key={index}*/}
-                        {/*                    position={path}*/}
-                        {/*                    draggable={true}*/}
-                        {/*                    icon={myIcon}*/}
-                        {/*                    eventHandlers={{*/}
-                        {/*                        mouseover: (e) => {*/}
-                        {/*                            e.target.openPopup()*/}
-                        {/*                        },*/}
-                        {/*                        mouseout: (e) => {*/}
-                        {/*                            e.target.closePopup()*/}
-                        {/*                        }*/}
-                        {/*                    }}*/}
-                        {/*                >*/}
-                        {/*                </Marker>*/}
-                        {/*        )}*/}
-                        {/*    </>*/}
+
+                        {flightRoute && flightRoute.map( (poly,index) =>
+                            // {console.log(poly)}
+                             <>
+                                <Polyline key={poly._id} color="red" positions={poly.router.coordinates}/>
+
+
+                                <Marker position={poly.router.coordinates[0]}>
+                                    <Popup closeOnClick={visible}>
+                                        <div className="popup-info">
+                                            <div className="popup-info__car">
+                                                <span><b>Машина:</b> Ford Mustang</span>
+                                                <span><b>Цвет:</b> Черный</span>
+                                                <span><b>Номер:</b> C430XE</span>
+                                                <img src={carImg} alt="car"/>
+                                            </div>
+                                            <div className="popup-info__driver">
+                                                <span><b>Водитель:</b> Евпатий О.В.</span>
+                                            </div>
+                                        </div>
+                                        {/*<button>Удалить</button>*/}
+                                    </Popup>
+                                 </Marker>
+
+                                 <Marker position={poly.router.coordinates[poly.router.coordinates.length -1]}>
+                                     <Popup closeOnClick={visible}>
+                                         <div className="popup-info">
+                                             <div className="popup-info__car">
+                                                 <span><b>Машина:</b></span>
+                                                 <span><b>Цвет:</b> Черный</span>
+                                                 <span><b>Номер:</b></span>
+                                                 <img src={carImg} alt="car"/>
+                                             </div>
+                                             <div className="popup-info__driver">
+                                                 <span><b>Водитель:</b>Евпатий О.В.</span>
+                                             </div>
+                                         </div>
+                                         {/*<button>Удалить</button>*/}
+                                     </Popup>
+                                 </Marker>
+                            </>
+                        )}
+
+                       {/*{*/}
+                       {/*     loading && pathMarker.map( (coordinatez,index) =>*/}
+                       {/*         <Marker*/}
+                       {/*             position={showMarker(coordinatez)}*/}
+                       {/*         >*/}
+
+                       {/*         </Marker>*/}
+                       {/*      // setTimeout(() => setPathMarker(coordinatez), 100 * index))*/}
+
+                       {/*    )}*/}
+
+                            {/*)}*/}
+                        {pathMarker.length ?
+                        <Marker
+                            ref={(ref) => {markerRef.current = ref}}
+                            position={pathMarker}
+                            icon={myIcon}
+                        >
+                            <Popup closeOnClick={visible}>
+                                <div className="popup-info__car">
+                                    <span><b>Машина:</b>{crewInfo.drivers.vehicle.type_vehicle}</span>
+                                    <span><b>Цвет:</b> Черный</span>
+                                    <span><b>Номер:</b>{crewInfo.drivers.vehicle.license_number}</span>
+                                    <img src={carImg} alt="car"/>
+                                </div>
+                                <div className="popup-info__driver">
+                                    <span><b>Водитель:</b>{crewInfo.drivers.drivers[0].secondName}</span>
+                                </div>
+                                {/*<button>Удалить</button>*/}
+                            </Popup>
+                        </Marker> : null}
+
+                        {/*{pathMarker.length !== 0 ? <Marker*/}
+                        {/*    position={pathMarker}*/}
+                        {/*    // draggable={true}*/}
+                        {/*    icon={myIcon}*/}
+                        {/*    // eventHandlers={{*/}
+                        {/*    //     mouseover: (e) => {*/}
+                        {/*    //         e.target.openPopup()*/}
+                        {/*    //     },*/}
+                        {/*    //     mouseout: (e) => {*/}
+                        {/*    //         e.target.closePopup()*/}
+                        {/*    //     }*/}
+                        {/*    // }}*/}
+                        {/*>*/}
+
+                        {/*</Marker> : null*/}
+                        {/*}*/}
+                        {/*{pathMarker && pathMarker.map( (mark,index) =>*/}
+                        {/*    <Marker*/}
+                        {/*        key={index}*/}
+                        {/*        position={[mark]}*/}
+                        {/*        // draggable={true}*/}
+                        {/*        // icon={myIcon}*/}
+                        {/*        // eventHandlers={{*/}
+                        {/*        //     mouseover: (e) => {*/}
+                        {/*        //         e.target.openPopup()*/}
+                        {/*        //     },*/}
+                        {/*        //     mouseout: (e) => {*/}
+                        {/*        //         e.target.closePopup()*/}
+                        {/*        //     }*/}
+                        {/*        // }}*/}
+                        {/*    >*/}
+                        {/*     */}
+                        {/*    </Marker>*/}
                         {/*)}*/}
                         {/*{flightRoute[0].router.coordinates.map( item=> console.log(item))}*/}
-                        {/*!!*/}
-                        {/*{polyline.length !== 0 && <Polyline positions={polyline} color="red"/>}*/}
+
+                        {polyline.length !== 0 && <Polyline positions={polyline} color="red"/>}
                         {/*<Polyline positions={pos} color="red" />*/}
 
                         {/*<Marker position={[40.8054, -74.0241]} draggable={true}>*/}

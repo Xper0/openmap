@@ -60,7 +60,6 @@ function App() {
             setCrew(crewdata.data)
             setFlightRouter(flightdata.data.message)
             setShipment(shipmentData.data)
-            setFlightRoute(flightData.data.message)
             dispatch(setInitData({
                 routeBox: routesData.data.result,
                 crewBox: crewdata.data.message,
