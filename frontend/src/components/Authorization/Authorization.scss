@@ -1,0 +1,27 @@
+.Authorization {
+  display: flex;
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 150px;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 4px 4px 8px 0 rgba(34, 60, 80, 0.2);
+  height: 500px;
+  border-radius: 10px;
+  .Authorization-title{
+    font-size: 24px;
+  }
+  .Authorization-input {
+    width: 80%;
+    margin: 5px;
+    height: 25px;
+    border-radius: 10px;
+    //padding-vert: 10;
+    //paddingHorizontal: 15;
+    background-color: white;
+    padding: 5px 15px;
+    font-size: 25px;
+
+  }
+}

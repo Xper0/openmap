@@ -11,14 +11,31 @@ import FlightRouter from "./routs/FlightRouter.js";
 import ReadyDriverRouter from "./routs/ReadyDriversRouter.js";
 import ShipmentRouter from "./routs/ShipmentRouter.js";
 import testBdRouter from "./routs/testBdRouter.js";
-
+import WebSocket, { WebSocketServer } from 'ws';
 
 
 const db = `mongodb+srv://Xper:${process.env.PASSWORD_DB}@cluster0.0ac6y.mongodb.net/${process.env.BLOCK_DB}?retryWrites=true&w=majority`;
 
 const app = express();
 const port = process.env.PORT || 5000;
+const wss = new WebSocketServer({ port: 7000})
 
+
+/**
+ * soket
+ */
+
+wss.on("connection" ,  (ws) => {
+    // ws.send('socket is online')
+    ws.on("message", async (body) => {
+        console.log("данные получены")
+        return ws.send(JSON.stringify({
+            type: "messages",
+            status: "ok",
+            msg: `Сообщение отправлено: ${body}`
+        }))
+    });
+})
 
 // app.use(express.text());
 app.use(express.json())
@@ -47,6 +64,48 @@ app.use("/api", FlightRouter)
 app.use("/api", ReadyDriverRouter)
 app.use("/api", ShipmentRouter)
 app.use("/api", testBdRouter)
+
+
+
+        // ws.on("message", async (body) => {
+        //     console.log(`this is message: ${body}`)
+        //     let {message, idChat, id} = JSON.parse(body)
+        //     if (message.length > 0 && idChat) {
+        //         return ws.send(JSON.stringify({
+        //             type: "messages",
+        //             status: "ok",
+        //             msg: `Сообщение отправлено: }`
+        //         }))
+        //     } else {
+        //         return ws.send(JSON.stringify({
+        //             type: "messages",
+        //             responseId: id,
+        //             status: "ok",
+        //             msg: `Сообщение ne отправлено`
+        //         }))
+        //     }
+        // })
+        // client.addEventHandler((update) => {
+        //   const message = update.message;
+        //   console.log(update)
+        //   if (update.className === "UpdateNewChannelMessage" || update.className === "UpdateNewMessage") {
+        //     let fromID = message._chatPeer.channelId;
+        //     let chatID = message.senderId;
+        //     // console.log(fromID);
+        //     // console.log(chatID);
+        //     return ws.send(JSON.stringify({
+        //       type: "newMessages",
+        //       responseId: message.senderId,
+        //       status: "ok",
+        //       msg: {
+        //         chatId: fromID,
+        //         user: chatID,
+        //         message: update.message
+        //       }
+        //     }));
+        //   }
+        // })
+
 
 app.listen(port, () => {
     try {

@@ -1,6 +1,6 @@
 import express from "express";
 import Users from "../models/userList.js";
-import {Auntification, LogIn, LogOut, Registration} from "../controller/userController.js";
+import {Auntification, authUser, LogOut, Registration} from "../controller/userController.js";
 
 const userRouters = express.Router();
 
@@ -19,7 +19,7 @@ const userRouters = express.Router();
 //   }
 // }
 // userRouters.post("/session", Auntification)
-userRouters.get("/login", LogIn)
+userRouters.get("/login", authUser)
            .post("/registration", Registration)
 
 

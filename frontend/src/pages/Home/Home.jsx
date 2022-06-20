@@ -1,9 +1,11 @@
 import React from 'react';
+import Authorization from "../../components/Authorization/Authorization";
+import "./home.scss";
 
 const Home = () => {
     return (
-        <div>
-           Home Page
+        <div className="Home">
+            <Authorization />
         </div>
     );
 };

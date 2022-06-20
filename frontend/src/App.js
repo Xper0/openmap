@@ -11,6 +11,12 @@ import {setFlightRoute} from "../src/redux/features/mapSlice";
 
 function App() {
     const dispatch = useDispatch();
+    const socket = new WebSocket("ws://127.0.0.1:7000");
+    socket.onopen = (msg) => {
+        console.log("server ON")
+    }
+
+
     // const flightRoute = useSelector( state => state.mapSlice)
 
     const [openDraw, setOpenDraw] = useState(true)
@@ -31,6 +37,8 @@ function App() {
     const [shipment, setShipment] = useState([])
     const [fetching, setFetching] = useState(false)
     const { flightRoute } = useSelector( state => state.mapSlice)
+
+
     // const [flightRoute, setFlightRoute] = useState([])
     // const [routeBox, setRouteBox] = useState(coordinates.result)
     // const [crewBox, setCrewBox] = useState(crew.message)
@@ -69,6 +77,7 @@ function App() {
                 flightShipment: []
             }))
             dispatch(setFlightRoute(flightData.data.message))
+            socket.send("первичные данные")
             setLoading(true)
             // setRoutes(await data.json())
         }

@@ -26,6 +26,7 @@
     "react-leaflet": "^4.0.0",
     "react-leaflet-animated-marker": "^1.0.2",
     "react-redux": "^8.0.2",
+    "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "turf-point": "^2.0.1",

@@ -1,6 +1,7 @@
 import express from "express";
 import Users from "../models/userList.js";
 import session from "express-session";
+import {createAccessToken} from "../utils/generateToken.js";
 
 
 
@@ -30,16 +31,18 @@ const Registration = async ( req, res ) => {
 
 }
 
-const LogIn = async (req, res) => {
+const authUser = async (req, res) => {
   const { email } = req.query
   const user = await Users.findOne({email})
   // req.session.test = 1
   if (user) {
+    const accessToken = createAccessToken(user._id)
     // req.session.email = user._doc.email
     // console.log(req.session)
     res.status(200).json({
-      msg: "пользователь зарегистрирован",
-      result: user
+      msg: "Добро пожаловать",
+      result: user,
+      token: accessToken
     })
   } else {
     res.status(200).json({
@@ -72,4 +75,4 @@ const Auntification = async ( req, res ) => {
   }
 }
 
-export { Auntification, Registration, LogIn, LogOut}
+export { Auntification, Registration, authUser, LogOut}
