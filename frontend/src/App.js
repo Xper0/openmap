@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Map from "./pages/Map/Map";
@@ -11,10 +11,8 @@ import {setFlightRoute} from "../src/redux/features/mapSlice";
 
 function App() {
     const dispatch = useDispatch();
-    const socket = new WebSocket("ws://127.0.0.1:7000");
-    socket.onopen = (msg) => {
-        console.log("server ON")
-    }
+    const socket = useRef()
+
 
 
     // const flightRoute = useSelector( state => state.mapSlice)
@@ -52,7 +50,6 @@ function App() {
     const getData = async () => {
         try {
             setLoading(false)
-
             const [routesData , crewdata, flightdata,shipmentData, flightData ] = await Promise.all([
                 axios.get("http://127.0.0.1:5000/api/createRoute"),
                 axios.get("http://127.0.0.1:5000/api/crew"),
@@ -77,7 +74,9 @@ function App() {
                 flightShipment: []
             }))
             dispatch(setFlightRoute(flightData.data.message))
-            socket.send("первичные данные")
+            // socket.current.send(JSON.stringify({
+            //     flightData
+            // }))
             setLoading(true)
             // setRoutes(await data.json())
         }
@@ -91,6 +90,25 @@ function App() {
     useEffect(() => {
         getData()
     },[])
+    useEffect(() => {
+       socket.current = new WebSocket("ws://127.0.0.1:7000");
+       socket.current.onopen = (msg) => {
+            console.log("server ON")
+           if (loading){
+               socket.current.send(JSON.stringify(
+                   flightRouter
+               ))
+           }
+
+        }
+       socket.current.onmessage = (response) => {
+            console.log(response)
+            let oMessage = JSON.parse(response.data)
+            console.dir(oMessage)
+       }
+
+    },[loading])
+
     // useEffect(() => {
     //     (async () => {
     //         if (fetching) {

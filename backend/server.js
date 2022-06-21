@@ -12,32 +12,59 @@ import ReadyDriverRouter from "./routs/ReadyDriversRouter.js";
 import ShipmentRouter from "./routs/ShipmentRouter.js";
 import testBdRouter from "./routs/testBdRouter.js";
 import WebSocket, { WebSocketServer } from 'ws';
+import FlightRouterModel from "./models/FlightRouterModel.js";
 
 
 const db = `mongodb+srv://Xper:${process.env.PASSWORD_DB}@cluster0.0ac6y.mongodb.net/${process.env.BLOCK_DB}?retryWrites=true&w=majority`;
 
 const app = express();
 const port = process.env.PORT || 5000;
-const wss = new WebSocketServer({ port: 7000})
-
 
 /**
- * soket
+ * Socket
  */
+const wss = new WebSocketServer({ port: 7000})
 
-wss.on("connection" ,  (ws) => {
+wss.on("connection", (ws) => {
     // ws.send('socket is online')
-    ws.on("message", async (body) => {
-        console.log("данные получены")
-        return ws.send(JSON.stringify({
-            type: "messages",
-            status: "ok",
-            msg: `Сообщение отправлено: ${body}`
-        }))
+    ws.on("message", async (body, isBinary) => {
+        connectionHandler(ws, body)
+        // const driverId = JSON.parse(body)
+        // const id = driverId[0].drivers._id
+        // const flightRoute = await FlightRouterModel.findOne({drivers: id})
+        // if (flightRoute) {
+        //     broadcastMessages(ws,flightRoute._doc, isBinary)
+        // }
     });
 })
 
-// app.use(express.text());
+function connectionHandler(ws,msg) {
+    msg = JSON.parse(msg)
+    ws.id = msg[0].drivers._id
+    broadcastMessages(ws, msg)
+}
+
+function broadcastMessages (ws,msg) {
+    wss.clients.forEach(async (client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            if(client.id === msg[0].drivers._id) {
+                const id = msg[0].drivers._id
+                const flightRoute = await FlightRouterModel.findOne({drivers: id})
+                if (flightRoute) {
+                    client.send(JSON.stringify(flightRoute._doc));
+                }else {
+                    client.send(JSON.stringify("Водителя не сущетвует"))
+                }
+
+            }
+        }
+    });
+}
+
+/**
+ * Config server
+ */
+
 app.use(express.json())
 app.use(
     cors({
@@ -66,45 +93,6 @@ app.use("/api", ShipmentRouter)
 app.use("/api", testBdRouter)
 
 
-
-        // ws.on("message", async (body) => {
-        //     console.log(`this is message: ${body}`)
-        //     let {message, idChat, id} = JSON.parse(body)
-        //     if (message.length > 0 && idChat) {
-        //         return ws.send(JSON.stringify({
-        //             type: "messages",
-        //             status: "ok",
-        //             msg: `Сообщение отправлено: }`
-        //         }))
-        //     } else {
-        //         return ws.send(JSON.stringify({
-        //             type: "messages",
-        //             responseId: id,
-        //             status: "ok",
-        //             msg: `Сообщение ne отправлено`
-        //         }))
-        //     }
-        // })
-        // client.addEventHandler((update) => {
-        //   const message = update.message;
-        //   console.log(update)
-        //   if (update.className === "UpdateNewChannelMessage" || update.className === "UpdateNewMessage") {
-        //     let fromID = message._chatPeer.channelId;
-        //     let chatID = message.senderId;
-        //     // console.log(fromID);
-        //     // console.log(chatID);
-        //     return ws.send(JSON.stringify({
-        //       type: "newMessages",
-        //       responseId: message.senderId,
-        //       status: "ok",
-        //       msg: {
-        //         chatId: fromID,
-        //         user: chatID,
-        //         message: update.message
-        //       }
-        //     }));
-        //   }
-        // })
 
 
 app.listen(port, () => {
