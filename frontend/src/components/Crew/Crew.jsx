@@ -16,6 +16,7 @@ import PathFinder from "geojson-path-finder";
 import axios from "axios";
 import {Button} from "@mui/material";
 import {setFlightRoute} from "../../redux/features/mapSlice";
+import {socket} from "../../socket";
 
 const Crew = () => {
     const {setFetching,setFlightCrewBoxrouteDrop, setRouteDrop,crewDrop, setCrewDrop,activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew}  = useContext(AppContext)
@@ -218,6 +219,12 @@ const Crew = () => {
           const {data} = await axios.post("http://127.0.0.1:5000/api/flightRouter", obj)
           console.log(data.message)
           setFetching(true)
+          if (data.message === "Рейс добавлен") {
+              socket.send(JSON.stringify({
+                  method: "addFlightRoute",
+                  driverId: boxData.flightCrewBox[0]._id
+              }))
+          }
           window.alert("Новый рейс создан")
       }
       else {

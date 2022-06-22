@@ -30,7 +30,6 @@ const findFlightRouter = async (req, res) => {
 
 const createFlightRouter = async (req, res) => {
     try {
-        console.log(req)
         // const flight = req.query;
         const flight = req.body;
         await FlightService().addFlightRouter(flight)

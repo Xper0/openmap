@@ -100,7 +100,6 @@ const Map = () => {
 
     useEffect(() => {
         try {
-            console.log(fetching)
             if (fetching === true){
                 reloadPage()
                setFetching(false)
@@ -529,8 +528,8 @@ const Map = () => {
 
                         {flightRoute && flightRoute.map( (poly,index) =>
                             // {console.log(poly)}
-                             <>
-                                <Polyline key={poly._id} color="red" positions={poly.router.coordinates}/>
+                             <div key={poly._id}>
+                                <Polyline  color="red" positions={poly.router.coordinates}/>
 
 
                                 <Marker position={poly.router.coordinates[0]}>
@@ -566,7 +565,7 @@ const Map = () => {
                                          {/*<button>Удалить</button>*/}
                                      </Popup>
                                  </Marker>
-                            </>
+                            </div>
                         )}
 
                        {/*{*/}

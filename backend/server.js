@@ -28,7 +28,16 @@ const wss = new WebSocketServer({ port: 7000})
 wss.on("connection", (ws) => {
     // ws.send('socket is online')
     ws.on("message", async (body, isBinary) => {
-        connectionHandler(ws, body)
+        body = JSON.parse(body)
+        switch (body.method) {
+            case "addFlightRoute":
+                connectionHandler(ws, body)
+                break
+            default:
+                break
+        }
+
+
         // const driverId = JSON.parse(body)
         // const id = driverId[0].drivers._id
         // const flightRoute = await FlightRouterModel.findOne({drivers: id})
@@ -39,24 +48,28 @@ wss.on("connection", (ws) => {
 })
 
 function connectionHandler(ws,msg) {
-    msg = JSON.parse(msg)
-    ws.id = msg[0].drivers._id
+    // msg = JSON.parse(msg)
+    console.log(msg)
+    ws.id = msg.driverId
+    // ws.id = msg[0].drivers._id
     broadcastMessages(ws, msg)
 }
 
 function broadcastMessages (ws,msg) {
     wss.clients.forEach(async (client) => {
         if (client.readyState === WebSocket.OPEN) {
-            if(client.id === msg[0].drivers._id) {
-                const id = msg[0].drivers._id
+            // if(client.id === msg[0].drivers._id) {
+            if(client.id === msg.driverId) {
+                // const id = msg[0].drivers._id
+                const id = msg.driverId
                 const flightRoute = await FlightRouterModel.findOne({drivers: id})
                 if (flightRoute) {
                     client.send(JSON.stringify(flightRoute._doc));
-                }else {
-                    client.send(JSON.stringify("Водителя не сущетвует"))
+                } else {
+                    client.send(JSON.stringify("Маршрут еще не назначен"))
                 }
-
             }
+            // }
         }
     });
 }

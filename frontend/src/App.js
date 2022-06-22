@@ -8,10 +8,11 @@ import axios from "axios";
 import { useSelector, useDispatch } from 'react-redux'
 import {setInitData} from "../src/redux/features/dragdropSlice";
 import {setFlightRoute} from "../src/redux/features/mapSlice";
+import { socket } from "./socket";
 
 function App() {
     const dispatch = useDispatch();
-    const socket = useRef()
+    // const socket = useRef()
 
 
 
@@ -90,22 +91,36 @@ function App() {
     useEffect(() => {
         getData()
     },[])
-    useEffect(() => {
-       socket.current = new WebSocket("ws://127.0.0.1:7000");
-       socket.current.onopen = (msg) => {
-            console.log("server ON")
-           if (loading){
-               socket.current.send(JSON.stringify(
-                   flightRouter
-               ))
-           }
+    socket.onopen = (msg) => {
+        // console.log(msg)
+        // if (loading){
+        //     socket.send(JSON.stringify(
+        //         flightRouter
+        //     ))
+        // }
 
+    }
+
+    useEffect(() => {
+       // socket = new WebSocket("ws://127.0.0.1:7000");
+       //  console.log("server ON")
+        if (loading){
+            console.log("server ON")
+        // socket.onopen = (msg) => {
+        //         console.log(msg)
+        //     if (loading){
+        //         socket.send(JSON.stringify(
+        //             flightRouter
+        //         ))
+        //     }
+        //
+        // }
         }
-       socket.current.onmessage = (response) => {
+        socket.onmessage = (response) => {
             console.log(response)
             let oMessage = JSON.parse(response.data)
             console.dir(oMessage)
-       }
+        }
 
     },[loading])
 
