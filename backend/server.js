@@ -49,7 +49,6 @@ wss.on("connection", (ws) => {
 
 function connectionHandler(ws,msg) {
     // msg = JSON.parse(msg)
-    console.log(msg)
     ws.id = msg.driverId
     // ws.id = msg[0].drivers._id
     broadcastMessages(ws, msg)

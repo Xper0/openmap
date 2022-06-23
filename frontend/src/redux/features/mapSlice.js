@@ -3,7 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
     coordinates: [],
     crew: [],
-    flightRoute: []
+    flightRoute: [],
+    activeRoute: {
+        roadColor: "#808080",
+        flightRoute: []
+    }
 
 }
 
@@ -20,10 +24,13 @@ export const mapSlice = createSlice({
         setFlightRoute: (state, action) => {
             state.flightRoute = action.payload
         },
+        setActiveRoute: (state, action) => {
+            state.activeRoute = action.payload
+        },
     },
 })
 
 
-export const { setCoordinates, setCrew, setFlightRoute } = mapSlice.actions
+export const { setCoordinates, setCrew, setFlightRoute, setActiveRoute } = mapSlice.actions
 
 export default mapSlice.reducer

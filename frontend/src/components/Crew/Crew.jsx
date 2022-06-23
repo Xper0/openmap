@@ -17,6 +17,7 @@ import axios from "axios";
 import {Button} from "@mui/material";
 import {setFlightRoute} from "../../redux/features/mapSlice";
 import {socket} from "../../socket";
+import FlightRouter from "../FlightRouter/FlightRouter";
 
 const Crew = () => {
     const {setFetching,setFlightCrewBoxrouteDrop, setRouteDrop,crewDrop, setCrewDrop,activePage, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew}  = useContext(AppContext)
@@ -102,11 +103,6 @@ const Crew = () => {
     //     setPolyline([])
     // }
 
-    const [initialState,setInitialState] = useState( {
-        routeGroup: coordinates.result,
-        crewGroup: [{titleRoute: "Маршрут3"},{titleRoute: "Маршрут4"}],
-        resultGroup: []
-    })
 
     const [routeBox, setRouteBox] = useState(coordinates.result)
     const [crewBox, setCrewBox] = useState(crew.message)
@@ -119,95 +115,7 @@ const Crew = () => {
         flightCrewBox
     })
 
-    const [currentBoard, setCurrentBoard] = useState(null)
-    const [currentItem, setCurrentItem] = useState(null)
-    const Drop = (e) => {
-        e.preventDefault();
 
-        setFlightRouteBox(currentItem)
-        // const currentIndex = currentBoard.indexOf(currentItem)
-        // currentBoard.splice(currentIndex, 1)
-        // const dropIndex = boxes.crewBox.indexOf(currentItem)
-        // boxes.crewBox.splice(dropIndex + 1,0,currentItem)
-        // setBoxes(Object.keys(boxes).map(b => {
-        //     if (b ==="crewBox"){
-        //         return b = currentBoard
-        //     }
-        //     return b = boxes[b]
-        // }))
-
-    }
-
-    const dragover = (e) => {
-        e.preventDefault();
-        if (e.target.className == "BoxItem") {
-            e.target.style.boxShadow = "0 4px 3px gray"
-        }
-    }
-    const dragEnd = (e) => {
-        e.preventDefault();
-        e.target.style.boxShadow = "none"
-    }
-    const dragLeave = (e) => {
-        e.preventDefault();
-        e.target.style.boxShadow = "none"
-    }
-    const dragStart = (e,board,item) => {
-        setCurrentItem(item)
-        setCurrentBoard(board)
-        const target = e.target
-        let itemId = e.dataTransfer.setData("card_id", target.id)
-        // setTimeout(() => {
-        //     target.style.border = "none"
-        // }, 0)
-    }
-
-    const [dragData, setDragData] = useState({});
-    function handleDragEnter(e, group) {
-        
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-    }
-
-    function handleDragLeave() {
-
-    }
-    const changeCategory = (itemId, group) => {
-        // const currentItem = initialState[itemId].indexOf(dragData.initialItem);
-        const currentItem = copyBoxDta[itemId].indexOf(dragData.initialItem);
-        // const dropIndex =
-        let dropdata = copyBoxDta[itemId].splice(currentItem, 1);
-        copyBoxDta[group].push(dragData.initialItem)
-        // const newList = {
-        //     routeGroup: delEl,
-        //     resultGroup: addEl
-        // }
-        // const obj = Object.assign(initialState, {
-        //     routeGroup: delEl,
-        //     resultGroup: [addEl],
-        //     crewGroup: initialState.crewGroup
-        //
-        // })
-        dispatch(setInitData(copyBoxDta))
-        // setInitialState(prev => ({...prev, ...initialState}))
-
-        // let arr = newItems.map()
-
-        // console.log(arr)
-        // newItems[itemId - 1].group = group;
-        // setInitialState([...newItems]);
-    };
-
-    function handleDrop(e, group) {
-        const selected = dragData.id
-        changeCategory(selected, group);
-    }
-
-    function handleDragStart(e, id, item) {
-        setDragData({ id: id, initialItem: item });
-    }
     const saveData = async () => {
       if((boxData.flightCrewBox.length && boxData.flightRouteBox.length) !== 0){
          let obj = {
@@ -224,6 +132,12 @@ const Crew = () => {
                   method: "addFlightRoute",
                   driverId: boxData.flightCrewBox[0]._id
               }))
+              dispatch(setInitData({
+                  routeBox: [...boxData.routeBox],
+                  crewBox: [...boxData.crewBox],
+                  flightRouteBox: [],
+                  flightCrewBox: []
+              }))
           }
           window.alert("Новый рейс создан")
       }
@@ -234,6 +148,10 @@ const Crew = () => {
 
     return (
         <div className="Crew">
+            {/*<div className="Active-route">*/}
+            {/*    /!*<h1>Активные маршруты</h1>*!/*/}
+            {/*    <FlightRouter />*/}
+            {/*</div>*/}
             {/*<div className="Map-option">*/}
                 {/*<button onClick={() => showPath()} >Расчет</button>*/}
                 {/*<button onClick={() => createAutoRoute()} >Построить маршрут</button>*/}
@@ -342,7 +260,7 @@ const Crew = () => {
                                         {boxData.flightRouteBox.length === 0 ?
                                             <div className="box-router_preload">
                                                 <MapIcon fontSize="large" color="action"/>
-                                                <h2 className="box-router_title">Перетащи маршрут</h2>
+                                                <h2 className="box-router_title">Перетащите маршрут</h2>
                                             </div> :
                                             (
                                                 boxData.flightRouteBox && boxData.flightRouteBox.map((routeItem, i) =>
@@ -369,7 +287,7 @@ const Crew = () => {
                                             <div className="box-router_preload">
                                                 <DirectionsCarIcon fontSize="large" color="action"/>
                                                 <PersonAddIcon fontSize="large" color="action"/>
-                                                <h2 className="box-router_title">Перетащи экипаж</h2>
+                                                <h2 className="box-router_title">Перетащите экипаж</h2>
                                             </div> :
                                             (boxData.flightCrewBox && boxData.flightCrewBox.map((crewItem, i) => crewItem.drivers.length !== 0 ?
                                                     <BoxItem
@@ -624,10 +542,11 @@ const Crew = () => {
                     >
                         Отменить
                     </Button>
-                    {/*<button onClick={() => setActivePage(!activePage)}>Отменить</button>*/}
+
                 </div>
 
             {/*</div>*/}
+
         </div>
     );
 };

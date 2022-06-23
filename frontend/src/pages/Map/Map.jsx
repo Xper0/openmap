@@ -27,14 +27,15 @@ import FlightRouter from "../../components/FlightRouter/FlightRouter";
 import Crew from "../../components/Crew/Crew";
 import LeafletReactTrackPlayer from "leaflet-react-track-player";
 import demo from "leaflet-react-track-player/src/demo2";
-import {setFlightRoute} from "../../redux/features/mapSlice";
+import {setActiveRoute, setFlightRoute} from "../../redux/features/mapSlice";
 import { useSelector, useDispatch } from 'react-redux'
+import SideBarRight from "../../components/SideBarRight/SideBarRight";
 
 let TimerCounter = 0
 const Map = () => {
     const {activePage, fetching, setFetching, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
 
-    const  { flightRoute } = useSelector( state => state.mapSlice)
+    const  { flightRoute, activeRoute } = useSelector( state => state.mapSlice)
     const dispatch = useDispatch();
     // const [activePage, setActivePage] = useState(true)
     // const [coordinates, setCoordinates] = useState([]);
@@ -44,10 +45,17 @@ const Map = () => {
     const [markers, setMarker] = useState([]);
     const [polyline, setPolyline] = useState([]);
     const [routeValue, setRouteValue] = useState("")
+    const [colorPolyline, setColorPolyline] = useState()
     // const [crew, setCrew] = useState([])
     const pointsReroute = explode(road);
     let copyflightRoute = JSON.parse(JSON.stringify(flightRoute))
     // const [test,setTest] = useState(fetching)
+    // useEffect(() => {
+    //     if (activeRoute.roadColor === "#ff0000") {
+    //       setColorPolyline(activeRoute.roadColor)
+    //
+    //     }
+    // },[activeRoute])
     const MyComponent = () => {
         const map = useMapEvents({
             click(e) {
@@ -322,6 +330,10 @@ const Map = () => {
     //     }
     //
     // }, [counter])
+  useEffect(() => {
+      let fil =  copyflightRoute.filter(item => item._id === activeRoute.flightRoute._id)
+      console.log(fil)
+  },[activeRoute])
 
     const optionMap = (map) => {
         // console.log(map)
@@ -350,6 +362,7 @@ const Map = () => {
                 <Sidebar
                     children={activePage ? <FlightRouter/> : <Crew/>}
                 />
+                {activePage ? null : <SideBarRight />}
                 {/*<div className="Map-option">*/}
 
                 {/*    <button onClick={() => showPath()} >Расчет</button>*/}
@@ -525,13 +538,24 @@ const Map = () => {
 
                         {/*    </Polyline>*/}
                         {/*})}*/}
+                        {/*{flightRoute.length !==0 &&*/}
+                        {/*    <Polyline*/}
 
-                        {flightRoute && flightRoute.map( (poly,index) =>
-                            // {console.log(poly)}
+                        {/*        pathOptions={{ color:colorPolyline }}*/}
+                        {/*        positions={flightRoute[0].router.coordinates}*/}
+                        {/*    />*/}
+                        {/*}*/}
+
+
+                        {flightRoute && copyflightRoute
+                            .filter(item => item._id.includes(activeRoute.flightRoute.length !== 0 ? activeRoute.flightRoute._id : ""))
+                            .map( (poly,index) =>
                              <div key={poly._id}>
-                                <Polyline  color="red" positions={poly.router.coordinates}/>
-
-
+                                <Polyline
+                                    // color={activeRoute.roadColor}
+                                    pathOptions={{ color: activeRoute.roadColor }}
+                                    positions={poly.router.coordinates}
+                                />
                                 <Marker position={poly.router.coordinates[0]}>
                                     <Popup closeOnClick={visible}>
                                         <div className="popup-info">
@@ -567,6 +591,7 @@ const Map = () => {
                                  </Marker>
                             </div>
                         )}
+
 
                        {/*{*/}
                        {/*     loading && pathMarker.map( (coordinatez,index) =>*/}
