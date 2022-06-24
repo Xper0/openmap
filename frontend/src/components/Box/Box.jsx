@@ -20,7 +20,16 @@ const Box = (props, datalist) => {
         // console.log(find)
         // const currentItem = copyBoxDta[dragdropData.id].indexOf(dragdropData.initialItem);
         // copyBoxDta[dragdropData.id].splice(currentItem, 1);
+        // copyBoxDta[props.id].push(dragdropData.initialItem)
+
         copyBoxDta[props.id].push(dragdropData.initialItem)
+        // if (copyBoxDta[props.id].length === 0) {
+        //    copyBoxDta[props.id].push(dragdropData.initialItem)
+        // }else {
+        //     // console.log(copyBoxDta[dragdropData.id])
+        //     // copyBoxDta[dragdropData.id] = [...copyBoxDta[dragdropData.id], ...copyBoxDta[props.id]]
+        //     copyBoxDta[props.id].splice(0,  copyBoxDta[props.id].length, dragdropData.initialItem)
+        // }
         dispatch(setInitData(copyBoxDta))
         // const card_id = e.dataTransfer.getData("card_id")
         //

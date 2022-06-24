@@ -330,10 +330,10 @@ const Map = () => {
     //     }
     //
     // }, [counter])
-  useEffect(() => {
-      let fil =  copyflightRoute.filter(item => item._id === activeRoute.flightRoute._id)
-      console.log(fil)
-  },[activeRoute])
+  // useEffect(() => {
+  //     let fil =  copyflightRoute.filter(item => item._id === activeRoute.flightRoute._id)
+  //
+  // },[activeRoute])
 
     const optionMap = (map) => {
         // console.log(map)
@@ -556,6 +556,10 @@ const Map = () => {
                                     pathOptions={{ color: activeRoute.roadColor }}
                                     positions={poly.router.coordinates}
                                 />
+
+
+                                 {activeRoute.roadColor === "#ff0000" ?
+                                     <>
                                 <Marker position={poly.router.coordinates[0]}>
                                     <Popup closeOnClick={visible}>
                                         <div className="popup-info">
@@ -589,6 +593,8 @@ const Map = () => {
                                          {/*<button>Удалить</button>*/}
                                      </Popup>
                                  </Marker>
+                                     </>
+                                     : null}
                             </div>
                         )}
 

@@ -7,7 +7,7 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 const SideBarRight = () => {
     return (
         <div className="SideBarRight">
-            <h1>Активные маршруты</h1>
+            <h1>Активные рейсы</h1>
             <Listroute>
                 <div className="SideBarRight__item">
                     <LocalShippingIcon fontSize="large" color="primary" />

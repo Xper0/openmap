@@ -157,6 +157,7 @@ const Crew = () => {
                 {/*<button onClick={() => createAutoRoute()} >Построить маршрут</button>*/}
                 {/*<button onClick={()=> clearMap()}>Очистить карту</button>*/}
                 {/*<button onClick={() => load()}>Загрузить данные</button>*/}
+                <h1>Конструктор рейсов</h1>
                 <div className="drag_things_to_boxes">
                         {/*<div className="box" id="routeGroup"*/}
                         {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
@@ -536,11 +537,11 @@ const Crew = () => {
                         Сохранить
                     </Button>
                     <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => setActivePage(!activePage)}
+                        variant="outlined"
+                        // color="error"
+                        // onClick={() => setActivePage(!activePage)}
                     >
-                        Отменить
+                        Очистить
                     </Button>
 
                 </div>

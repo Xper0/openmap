@@ -5,9 +5,34 @@
   justify-content: space-around;
   .flightrouter-content{
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    margin-top: 50px;
+    height: 750px;
+    width: 100%;
+    overflow-y: scroll;
+    --scrollbarBG: #128612;
+    &::-webkit-scrollbar {
+      width: 15px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #1976d2  ;
+      border-radius: 6px;
+      border: 3px solid #1976d2 ;
+    }
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,255,1);
+      border-radius: 15px;
+    }
+
   }
+  .flightrouter-add-btn{
+    display: flex;
+    justify-content: end;
+  }
+  //.flightrouter-content{
+  //  display: flex;
+  //  justify-content: space-around;
+  //  align-items: center;
+  //}
   .flightrouter-item-container{
     padding: 5px 16px 5px 12px;
     cursor: pointer;
@@ -58,4 +83,15 @@
       }
   }
   }
+
+  .flightrouter-container{
+    display: flex;
+    min-width: 150px;
+    .flightrouter-content-filter{
+      width: 350px;
+      background: #61dafb;
+    }
+  }
+
+
 }
