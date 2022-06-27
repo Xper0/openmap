@@ -12,6 +12,9 @@ const vehicleRouteSchema = new Schema({
     },
     wear_vehicle: {
         type: Number
+    },
+    max_shipment: {
+        type: Number
     }
 
 })

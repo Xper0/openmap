@@ -145,6 +145,7 @@ const Crew = () => {
           window.alert("Не все поля заполнены!")
       }
     }
+    console.log(boxData.flightRouteBox)
 
     return (
         <div className="Crew">
@@ -157,7 +158,9 @@ const Crew = () => {
                 {/*<button onClick={() => createAutoRoute()} >Построить маршрут</button>*/}
                 {/*<button onClick={()=> clearMap()}>Очистить карту</button>*/}
                 {/*<button onClick={() => load()}>Загрузить данные</button>*/}
+            <div className="Crew-header">
                 <h1>Конструктор рейсов</h1>
+            </div>
                 <div className="drag_things_to_boxes">
                         {/*<div className="box" id="routeGroup"*/}
                         {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
@@ -342,7 +345,10 @@ const Crew = () => {
                         </div>
                     </div>
                     <Box className="box" id="crewBox" title={"Экипаж"}>
-                        {boxData.crewBox && boxData.crewBox.map((crewItem,i) => crewItem.drivers.length !== 0 ?
+                        {boxData.crewBox && boxData.crewBox
+                            .filter(item => boxData.flightRouteBox.length !==0 ? item.vehicle.max_shipment >= (boxData.flightRouteBox[0].shipment.shipment[0].weight).replace(/[^0-9\-\.]/g, '') : item
+                            )
+                            .map((crewItem,i) => crewItem.drivers.length !== 0 ?
                             <BoxItem
                                 key={i}
                                 className="BoxItem"
@@ -527,6 +533,7 @@ const Crew = () => {
                     {/*</div>*/}
                     {/*}*/}
                 </div>
+
                 <div className="Crew-footer">
                     {/*<button onClick={() => saveData()}>Сохранить</button>*/}
                     <Button
@@ -543,7 +550,6 @@ const Crew = () => {
                     >
                         Очистить
                     </Button>
-
                 </div>
 
             {/*</div>*/}

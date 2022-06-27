@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Autocomplete, TextField, Box, Fab} from "@mui/material";
+import {Autocomplete, TextField, Box, Fab, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
 import AppContext from "../../context/Context";
 import AddIcon from '@mui/icons-material/Add';
 import "./flightrouter.scss";
@@ -9,6 +9,9 @@ import axios from "axios";
 import {setFlightRoute} from "../../redux/features/mapSlice";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import {setActiveRoute} from "../../redux/features/mapSlice";
+import AddRoadIcon from '@mui/icons-material/AddRoad';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { setActivePage, setShowActiveDetails, setShowActiveFilter } from "../../redux/features/activePageSlice";
 import Listroute from "../Listroute/Listroute";
 import Details from "../Details/Details";
 
@@ -17,18 +20,16 @@ const FlightRouter = () => {
     const {
         fetching,
         setFetching,
-        activePage,
-        setActivePage,
         flightRouter,
         setFlightRouter,
         loading,
         setLoading
     } = useContext(AppContext)
-    const {flightRoute, activeRoute} = useSelector(state => state.mapSlice)
-    const [showFilterBar, setShowFilterBar] = useState(false);
-    const [showDetails, setShowDetails] = useState(false)
-    let [value, setValue] = useState("")
 
+
+    const { flightRoute, activeRoute } = useSelector(state => state.mapSlice)
+    const { activePage, showActiveDetails, showActiveFilter } = useSelector(state => state.activePageSlice)
+    const [flightItem, setFlightItem] = useState([])
     const MouseOver = (e, listItem) => {
         dispatch(setActiveRoute({
             roadColor: "#ff0000",
@@ -41,6 +42,10 @@ const FlightRouter = () => {
                 flightRoute: []
             }
         ))
+    }
+    const getDetails = (listItem) => {
+        dispatch(setShowActiveDetails(showActiveDetails))
+        setFlightItem(listItem)
     }
     // useEffect(() => {
     //     (async () => {
@@ -56,52 +61,109 @@ const FlightRouter = () => {
 
     return (
         <div className="flightrouter">
-            {showDetails ? <Details /> : null}
+            {showActiveDetails ? <Details items={flightItem} /> :
+                <>
             <h1>Активные маршруты</h1>
             <div className="flightrouter-add-btn">
-                <div onClick={() => setShowFilterBar(!showFilterBar)}>
-                    <h3>Фильтры</h3>
+                <div
+                    className="flightrouter-add-btn__filter"
+                    onClick={() => dispatch(setShowActiveFilter(showActiveFilter))}
+                >
+                    <FilterListIcon />
+                    <h3>Фильтр</h3>
+                </div>
+                <div className="search__container">
+                    <input className="search__input" type="text" placeholder="Search" />
                 </div>
                 <Fab
                     color="primary"
                     aria-label="add"
                     size="small"
-                    onClick={() => setActivePage(!activePage)}>
-                    <AddIcon/>
+                    onClick={() => dispatch(setActivePage(activePage))}
+                >
+                    <AddRoadIcon />
+                    {/*<AddIcon/>*/}
                 </Fab>
             </div>
             <div className="flightrouter-container">
-                {showFilterBar ?
+                {showActiveFilter ?
                     <div className="flightrouter-content-filter">
-
+                        <FormControl variant="standard" sx={{m: 3, minWidth: 200, height: 140}}>
+                            <InputLabel id="demo-simple-select-standard-label">Маршрут</InputLabel>
+                            <Select
+                                label="Маршрут"
+                            >
+                                <MenuItem>Актиный</MenuItem>
+                                <MenuItem>Завершенный</MenuItem>
+                            </Select>
+                        </FormControl>
                     </div>
-
                     : null}
 
                 <div className="flightrouter-content">
-                    <Listroute>
-                        <div className="flightrouter-item-container">
-                            <div className="flightrouter-item-header">
-                                <h3 className="flightrouter-item-header__route-duration">2ч 30мин</h3>
-                                <span className="flightrouter-item-header__route-hint">Прибытие в 12:58</span>
-                            </div>
-                            <div className="flightrouter-item-content">
-                                <LocalShippingIcon fontSize="large" color="primary"/>
-                                {/*{listItem.router.titleRoute}*/}
-                                <span>
+                    <List>
+                        {loading && flightRoute.map( listItem =>
+                            <div key={listItem._id}
+                                 onMouseOver={(e) => MouseOver(e, listItem)}
+                                 onMouseOut={(e) => MouseOut(e, listItem)}
+                                 onClick={() => getDetails(listItem)}
+                                 style={{width: "100%"}}
+                            >
+                                <ListItem button>
+                                    {/*<ListItemText>*/}
+                                    <div className="flightrouter-item-container">
+                                        <div className="flightrouter-item-header">
+                                            <h3 className="flightrouter-item-header__route-duration">2ч 30мин</h3>
+                                            <span className="flightrouter-item-header__route-hint">Прибытие в 12:58</span>
+                                        </div>
+                                        <div className="flightrouter-item-content">
+                                            <LocalShippingIcon fontSize="large" color="primary"/>
+                                            {/*{listItem.router.titleRoute}*/}
+                                            <span>
                                             База 1 - Склад 1
                                         </span>
 
 
-                            </div>
-                            <div
-                                className="flightrouter-item-footer"
-                            >
-                                <span>Подробнее</span>
-                            </div>
+                                        </div>
+                                        <div
+                                            className="flightrouter-item-footer"
+                                        >
+                                            <span>Подробнее</span>
+                                        </div>
 
-                        </div>
-                    </Listroute>
+                                    </div>
+                                    {/*</ListItemText>*/}
+                                </ListItem>
+                                <Divider/>
+                            </div>
+                        )}
+                    </List>
+
+
+
+                    {/*<Listroute>*/}
+                    {/*    <div className="flightrouter-item-container">*/}
+                    {/*        <div className="flightrouter-item-header">*/}
+                    {/*            <h3 className="flightrouter-item-header__route-duration">2ч 30мин</h3>*/}
+                    {/*            <span className="flightrouter-item-header__route-hint">Прибытие в 12:58</span>*/}
+                    {/*        </div>*/}
+                    {/*        <div className="flightrouter-item-content">*/}
+                    {/*            <LocalShippingIcon fontSize="large" color="primary"/>*/}
+                    {/*            /!*{listItem.router.titleRoute}*!/*/}
+                    {/*            <span>*/}
+                    {/*                        База 1 - Склад 1*/}
+                    {/*                    </span>*/}
+
+
+                    {/*        </div>*/}
+                    {/*        <div*/}
+                    {/*            className="flightrouter-item-footer"*/}
+                    {/*        >*/}
+                    {/*            <span>Подробнее</span>*/}
+                    {/*        </div>*/}
+
+                    {/*    </div>*/}
+                    {/*</Listroute>*/}
                 </div>
 
             </div>
@@ -161,8 +223,8 @@ const FlightRouter = () => {
             {/*        </div>*/}
             {/*    )}*/}
             {/*</List>*/}
-
-
+                </>
+                }
         </div>
     );
 };

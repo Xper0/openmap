@@ -23,7 +23,8 @@ const getRoutes = async (req,res) => {
 
 const createRoute = async (req, res) => {
   try {
-    const { route } = JSON.parse(req.body);
+    // const route  = JSON.parse(req.body);
+    const  route = req.body;
     await mapRoutes.create(route)
     res.json({
       status: "ok",

@@ -3,6 +3,7 @@ import dragdropSlice from "./features/dragdropSlice";
 import mapSlice from "./features/mapSlice";
 import userInfoSlice from "./features/userInfoSlice";
 import overseerSlice from "./features/overseerSlice";
+import activePageSlice from "./features/activePageSlice";
 
 export const store = configureStore({
     reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
         mapSlice,
         userInfoSlice,
         overseerSlice,
+        activePageSlice
     },
 })

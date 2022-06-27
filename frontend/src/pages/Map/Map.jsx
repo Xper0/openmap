@@ -33,9 +33,10 @@ import SideBarRight from "../../components/SideBarRight/SideBarRight";
 
 let TimerCounter = 0
 const Map = () => {
-    const {activePage, fetching, setFetching, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
+    const {fetching, setFetching, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
 
     const  { flightRoute, activeRoute } = useSelector( state => state.mapSlice)
+    const { activePage } = useSelector(state => state.activePageSlice);
     const dispatch = useDispatch();
     // const [activePage, setActivePage] = useState(true)
     // const [coordinates, setCoordinates] = useState([]);
@@ -346,8 +347,6 @@ const Map = () => {
     }
 
 
-
-
     // let interval = setInterval(changeCoord,4000)
     // useEffect(() => {
     //    let interval = setInterval(changeCoord,4000)
@@ -360,9 +359,9 @@ const Map = () => {
             </div>
             <div className="Map-content">
                 <Sidebar
-                    children={activePage ? <FlightRouter/> : <Crew/>}
+                    children={activePage ?  <Crew/>: <FlightRouter/>}
                 />
-                {activePage ? null : <SideBarRight />}
+                {activePage ?  <SideBarRight /> : null }
                 {/*<div className="Map-option">*/}
 
                 {/*    <button onClick={() => showPath()} >Расчет</button>*/}

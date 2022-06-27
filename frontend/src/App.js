@@ -30,7 +30,7 @@ function App() {
     const [swap, setSwap] = useState([])
     const [crewRoute, setCrewRoute] = useState([])
     const [flightRouter, setFlightRouter] = useState([])
-    const [activePage, setActivePage] = useState(true)
+    // const [activePage, setActivePage] = useState(true)
     const [routeDrop, setRouteDrop] =useState([])
     const [crewDrop, setCrewDrop] = useState([])
     const [shipment, setShipment] = useState([])
@@ -140,7 +140,7 @@ function App() {
       <div className="App">
           <AppContext.Provider value={{coordinates, setCoordinates, loading,
               setLoading, crew, setCrew, swap, setSwap,crewRoute, setCrewRoute,openDraw, setOpenDraw,
-              flightRouter, setFlightRouter, activePage, setActivePage, routeDrop, setRouteDrop,
+              flightRouter, setFlightRouter,  routeDrop, setRouteDrop,
               crewDrop, setCrewDrop,fetching, setFetching
           }}>
               <Routes>
