@@ -1,8 +1,12 @@
 import VehicleModel from "../models/VehicleModel.js";
 
 
-const findVehicle = (req, res) => {
-
+const findVehicle = async (req, res) => {
+    console.log(req)
+    const findCar = await VehicleModel.find({})
+    res.status(200).json({
+        message: findCar
+    })
 }
 
 const createVehicle = async (req, res) => {

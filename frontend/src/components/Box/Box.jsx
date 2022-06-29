@@ -22,15 +22,25 @@ const Box = (props, datalist) => {
         // copyBoxDta[dragdropData.id].splice(currentItem, 1);
         // copyBoxDta[props.id].push(dragdropData.initialItem)
 
-        copyBoxDta[props.id].push(dragdropData.initialItem)
-        // if (copyBoxDta[props.id].length === 0) {
-        //    copyBoxDta[props.id].push(dragdropData.initialItem)
-        // }else {
-        //     // console.log(copyBoxDta[dragdropData.id])
-        //     // copyBoxDta[dragdropData.id] = [...copyBoxDta[dragdropData.id], ...copyBoxDta[props.id]]
-        //     copyBoxDta[props.id].splice(0,  copyBoxDta[props.id].length, dragdropData.initialItem)
+        // copyBoxDta[props.id].push(dragdropData.initialItem)
+        if (copyBoxDta[props.id].length === 0) {
+           copyBoxDta[props.id].push(dragdropData.initialItem)
+        } else if  (dragdropData.id === "flightRouteBox") {
+            console.log(copyBoxDta)
+            // copyBoxDta[props.id].push(copyBoxDta[dragdropData.id][0])
+            // copyBoxDta[dragdropData.id].splice(0,  1)
+        }else {
+            console.log("delete")
+            copyBoxDta[dragdropData.id].push(copyBoxDta[props.id][0])
+            copyBoxDta[props.id].splice(0,  copyBoxDta[props.id].length, dragdropData.initialItem)
+        }
+
+
+
         // }
+
         dispatch(setInitData(copyBoxDta))
+        console.log(copyBoxDta)
         // const card_id = e.dataTransfer.getData("card_id")
         //
         // const card = document.getElementById(card_id)

@@ -226,7 +226,20 @@ const Crew = () => {
                                     id={"routeBox"}
                                     item={routeItem}
                                 >
-                                    <h3>{routeItem.titleRoute}</h3>
+                                    <div className="BoxItem_shipment">
+                                        <li>
+                                            <label>Маршрут:</label>
+                                            <span>{routeItem.titleRoute}</span>
+                                        </li>
+                                        <li>
+                                            <label>Груз:</label>
+                                            <span>{routeItem.shipment.shipment[0].name}</span>
+                                        </li>
+                                       <li>
+                                           <label>Вес:</label>
+                                           <span>{routeItem.shipment.shipment[0].weight}</span>
+                                       </li>
+                                    </div>
                                 </BoxItem>
                             )}
                     </Box>
@@ -274,7 +287,18 @@ const Crew = () => {
                                                         id={"flightRouteBox"}
                                                         item={routeItem}
                                                     >
-                                                        <h3>{routeItem.titleRoute}</h3>
+
+
+                                                                <label>Маршрут:</label>
+                                                                <span>{routeItem.titleRoute}</span>
+
+                                                                <label>Груз:</label>
+                                                                <span>{routeItem.shipment.shipment[0].name}</span>
+
+                                                                <label>Вес:</label>
+                                                                <span>{routeItem.shipment.shipment[0].weight}</span>
+
+
                                                     </BoxItem>
                                                 )
                                             )
@@ -293,7 +317,8 @@ const Crew = () => {
                                                 <PersonAddIcon fontSize="large" color="action"/>
                                                 <h2 className="box-router_title">Перетащите экипаж</h2>
                                             </div> :
-                                            (boxData.flightCrewBox && boxData.flightCrewBox.map((crewItem, i) => crewItem.drivers.length !== 0 ?
+                                            (boxData.flightCrewBox && boxData.flightCrewBox
+                                                    .map((crewItem, i) => crewItem.drivers.length !== 0 ?
                                                     <BoxItem
                                                         key={i}
                                                         className="BoxItem"
@@ -307,6 +332,9 @@ const Crew = () => {
                                                                 <span>Гос.номер: {crewItem.vehicle.license_number}</span>
                                                                 <span>Тип: {crewItem.vehicle.type_vehicle}</span>
                                                                 <span>Износ: {crewItem.vehicle.wear_vehicle}</span>
+                                                                    <span>Макс. вес:</span>
+                                                                    <span>{crewItem.vehicle.max_shipment}кг</span>
+
                                                             </div>)
 
                                                         }
@@ -377,6 +405,10 @@ const Crew = () => {
                                         <li>
                                             <span>Износ:</span>
                                             <span>{crewItem.vehicle.wear_vehicle}%</span>
+                                        </li>
+                                        <li>
+                                            <span>Макс. вес:</span>
+                                            <span>{crewItem.vehicle.max_shipment}кг</span>
                                         </li>
                                         {/*<span>ФИО: {`${driver.secondName} ${driver.firstName.substr(0,1)}.${driver.middleName.substr(0,1)}.`}</span>*/}
                                         {/*<span>Должность: {driver.job_position}</span>*/}

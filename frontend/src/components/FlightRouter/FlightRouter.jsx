@@ -120,7 +120,7 @@ const FlightRouter = () => {
                                             <LocalShippingIcon fontSize="large" color="primary"/>
                                             {/*{listItem.router.titleRoute}*/}
                                             <span>
-                                            База 1 - Склад 1
+                                          {listItem.router.titleRoute}
                                         </span>
 
 
