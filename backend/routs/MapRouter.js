@@ -1,14 +1,20 @@
 import express from "express";
 import path from "path";
-import {createRoute, getRoutes} from "../controller/mapController.js";
+import {
+  createRoute,
+  getRoutes,
+  createRouteWithPoints,
+  findRouteById
+} from "../controller/mapController.js";
 
-const mapRouter = express.Router()
-const __dirname = path.dirname(process.argv[1])
+const mapRouter = express.Router();
+const __dirname = path.dirname(process.argv[1]);
 
-
-mapRouter.get("/createRoute", getRoutes)
-         .post("/createRoute", createRoute)
-
+mapRouter
+  .get("/createRoute", getRoutes)
+  .post("/createRoute", createRoute)
+  .post("/createRouteWithPoints", createRouteWithPoints)
+  .get("/findRouteById", findRouteById);
 
 // mapRouter.get("/Map",  async (req, res) => {
 //
@@ -53,7 +59,5 @@ mapRouter.get("/createRoute", getRoutes)
 //   })
 // })
 // mapRouter.post("/createRoute", createRoute)
-
-
 
 export default mapRouter;

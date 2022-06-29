@@ -5,11 +5,16 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
+<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1",
     "verify": "scripts/verify",
     "package": "node_modules/heroku-nodejs-build/scripts/package",
     "release": "node_modules/heroku-nodejs-build/scripts/release",
     "deploy": "node_modules/heroku-nodejs-build/scripts/deploy"
+=======
+    "start": "node server.js",
+    "start:dev": "nodemon server.js"
+>>>>>>> contributor/avvakumov
   },
   "author": "",
   "license": "ISC",

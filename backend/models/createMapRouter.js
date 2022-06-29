@@ -1,10 +1,20 @@
 import mongoose from "mongoose";
-const Schema = mongoose.Schema;
 import mongooseAutoPopulate from "mongoose-autopopulate";
+
+const Schema = mongoose.Schema;
+
+/**
+ * Схема для маршрута
+ *
+ * @var titleRoute название маршрута {Spot}
+ * @var coordinate массива координат [долгота(longitude){Number}, широта(latitude){Number}]
+ * @var routePoints массив обектов точек маршрута {routePoints[]}
+ * @var weight вес маршрута
+ */
 
 const mapRouteSchema = new Schema({
   titleRoute: {
-    type: String
+    type: String,
   },
   coordinates: {
     type: Array
@@ -13,12 +23,22 @@ const mapRouteSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shipments",
     autopopulate: true
-  }
+  },
+  routePoints: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "routePoints",
+      autopopulate: true,
+    },
+  ],
+  weight: {
+    type: Number,
+  },
 })
 
 mapRouteSchema.plugin(mongooseAutoPopulate)
 
+
 const mapRoutes = mongoose.model("mapRoutes", mapRouteSchema);
 
-
-export default  mapRoutes;
+export default mapRoutes;
