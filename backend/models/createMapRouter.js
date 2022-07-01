@@ -16,9 +16,17 @@ const mapRouteSchema = new Schema({
   titleRoute: {
     type: String,
   },
-  coordinates: {
-    type: Array
-  },
+  // coordinates: {
+  //   type: Array
+  // },
+  coordinates: [
+      [
+        {
+          lat: {type: Number},
+          lng: {type: Number}
+        }
+      ]
+  ],
   shipment: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shipments",

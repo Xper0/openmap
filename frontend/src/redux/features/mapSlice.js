@@ -7,7 +7,8 @@ const initialState = {
     activeRoute: {
         roadColor: "#808080",
         flightRoute: []
-    }
+    },
+    activeStep: 0
 
 }
 
@@ -27,10 +28,13 @@ export const mapSlice = createSlice({
         setActiveRoute: (state, action) => {
             state.activeRoute = action.payload
         },
+        setCheckRoute: (state, action) => {
+            state.activeStep = action.payload
+        },
     },
 })
 
 
-export const { setCoordinates, setCrew, setFlightRoute, setActiveRoute } = mapSlice.actions
+export const { setCoordinates, setCrew, setFlightRoute, setActiveRoute, setCheckRoute } = mapSlice.actions
 
 export default mapSlice.reducer

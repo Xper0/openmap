@@ -27,7 +27,7 @@ import FlightRouter from "../../components/FlightRouter/FlightRouter";
 import Crew from "../../components/Crew/Crew";
 import LeafletReactTrackPlayer from "leaflet-react-track-player";
 import demo from "leaflet-react-track-player/src/demo2";
-import {setActiveRoute, setFlightRoute} from "../../redux/features/mapSlice";
+import {setActiveRoute, setCheckRoute, setFlightRoute} from "../../redux/features/mapSlice";
 import { useSelector, useDispatch } from 'react-redux'
 import SideBarRight from "../../components/SideBarRight/SideBarRight";
 
@@ -50,6 +50,11 @@ const Map = () => {
     // const [crew, setCrew] = useState([])
     const pointsReroute = explode(road);
     let copyflightRoute = JSON.parse(JSON.stringify(flightRoute))
+    const [loadMarkers, setLoadMarkers] = useState(false)
+    const [pathMarker,setPathMarker] = useState([])
+    const [crewInfo, setCrewInfo] = useState([])
+    let [counter, setCounter] = useState(0)
+
     // const [test,setTest] = useState(fetching)
     // useEffect(() => {
     //     if (activeRoute.roadColor === "#ff0000") {
@@ -75,11 +80,10 @@ const Map = () => {
         })
 
         useEffect(() => {
-
-            if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
+            if (flightRoute.length !== 0 && counter <= flightRoute[3].router.coordinates.length){
                 let timerRef;
                 // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
-                timerRef = setInterval(setMarkerMachine, 4000)
+                timerRef = setInterval(setMarkerMachine, 5000)
 
                 // let timerRef= setInterval(() => {
                 //
@@ -95,9 +99,50 @@ const Map = () => {
                 }
             }
 
+            // if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
+            //     let timerRef;
+            //     // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
+            //     timerRef = setInterval(setMarkerMachine, 1000)
+            //
+            //     // let timerRef= setInterval(() => {
+            //     //
+            //     //         setPathMarker(flightRoute[0].router.coordinates[i])
+            //     //     setCounter(prev => prev + 1)
+            //     //         // i++
+            //     //
+            //     //
+            //     //     }
+            //     //     ,100)
+            //     return () => {
+            //         clearInterval(timerRef)
+            //     }
+            // }
+
         }, [counter])
 
     }
+    useEffect(() => {
+        if (flightRoute.length !== 0) {
+            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[3].router.coordinates[40].reverse())) {
+                console.log("start")
+                dispatch(setCheckRoute(1))
+            }
+            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[3].router.coordinates[150].reverse())) {
+                console.log("middle")
+                dispatch(setCheckRoute(2))
+            }
+            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[3].router.coordinates[960].reverse())) {
+                console.log("end")
+                dispatch(setCheckRoute(3))
+            }
+
+                // item.router.routePoints.length !== 0 ? item.router.routePoints.map(mark => {
+
+                //     }
+                // ) : null)
+        }
+
+    },[pathMarker])
 
     const reloadPage = async () => {
         const [flightData] = await Promise.all([
@@ -259,27 +304,43 @@ const Map = () => {
     // )
     // console.log(pathMarker)
 
-    const [loadMarkers, setLoadMarkers] = useState(false)
-    const [pathMarker,setPathMarker] = useState([])
-    const [crewInfo, setCrewInfo] = useState([])
-    let [counter, setCounter] = useState(0)
 
 
 
      async function  setMarkerMachine () {
          // TimerCounter++
          // console.log(TimerCounter)
-         flightRoute.forEach(item => {
-                 if (counter <  item.router.coordinates.length) {
-                     setPathMarker(item.router.coordinates[counter])
-                     setCrewInfo(item)
-                     setCounter(prev => prev + 1)
-                 }else {
-                      setCounter(0)
-                     // clearInterval(timerRef)
-                 }
-             }
-         )
+         if (counter <  copyflightRoute[3].router.coordinates.length) {
+                 setPathMarker(copyflightRoute[3].router.coordinates[counter])
+                 // setCrewInfo(item)
+                 setCounter(prev => prev + 1)
+         }
+         else {
+             setCounter(0)
+             // clearInterval(timerRef)
+         }
+         //    flightRoute[3].router.coordinates.forEach(item => {
+         //
+         //         setPathMarker(item.router.coordinates[counter])
+         //         setCrewInfo(item)
+         //         setCounter(prev => prev + 1)
+         //
+         // })
+
+         //!!!!!
+         // flightRoute.forEach(item => {
+         //         if (counter <  item.router.coordinates.length) {
+         //             setPathMarker(item.router.coordinates[counter])
+         //             setCrewInfo(item)
+         //             setCounter(prev => prev + 1)
+         //         }else {
+         //              setCounter(0)
+         //             // clearInterval(timerRef)
+         //         }
+         //     }
+         // )
+
+
          // const res = await Promise.all(flightRoute.map(async (item,index) => {
          //     if (counter <  item.router.coordinates.length) {
          //         setPathMarker(item.router.coordinates[counter])
@@ -312,6 +373,7 @@ const Map = () => {
         //     }
         // )
     }
+
 
     // useEffect(() => {
     //     if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
@@ -352,6 +414,8 @@ const Map = () => {
     //    let interval = setInterval(changeCoord,4000)
     //     // clearInterval(interval)
     // })
+
+
     return (
         <div className="Map-container">
             <div>
@@ -453,79 +517,79 @@ const Map = () => {
                         />
 
                         <MyComponent/>
-                        {markers.length !== 0 && markers.map((marker, index) =>
-                            <Marker
-                                key={index}
-                                position={marker}
-                                draggable={true}
-                                eventHandlers={{
-                                    click: () => {
-                                        console.log('marker clicked')
-                                    },
-                                }}
-                            >
-                                <Popup>First marker
-                                    <button>Удалить</button>
-                                </Popup>
+                        {/*{markers.length !== 0 && markers.map((marker, index) =>*/}
+                        {/*    <Marker*/}
+                        {/*        key={index}*/}
+                        {/*        position={marker}*/}
+                        {/*        draggable={true}*/}
+                        {/*        eventHandlers={{*/}
+                        {/*            click: () => {*/}
+                        {/*                console.log('marker clicked')*/}
+                        {/*            },*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <Popup>First marker*/}
+                        {/*            <button>Удалить</button>*/}
+                        {/*        </Popup>*/}
 
-                            </Marker>
-                        )}
+                        {/*    </Marker>*/}
+                        {/*)}*/}
 
-                        {markerCar.length !== 0 &&
-                            <Marker
-                                position={markerCar[0]}
-                                draggable={true}
-                                icon={myIcon}
-                                eventHandlers={{
-                                    mouseover: (e) => {
-                                        e.target.openPopup()
-                                    },
-                                    mouseout: (e) => {
-                                        e.target.closePopup()
-                                    }
-                                }}
-                            >
-                                <Popup closeOnClick={visible}>
-                                    <div className="popup-info">
-                                        <div className="popup-info__car">
-                                            <span><b>Машина:</b> Ford Mustang</span>
-                                            <span><b>Цвет:</b> Черный</span>
-                                            <span><b>Номер:</b> C430XE</span>
-                                            <img src={carImg} alt="car"/>
-                                        </div>
-                                        <div className="popup-info__driver">
-                                            <span><b>Водитель:</b> Евпатий О.В.</span>
-                                        </div>
-                                    </div>
-                                    {/*<button>Удалить</button>*/}
-                                </Popup>
-                            </Marker>
-                        }
+                        {/*{markerCar.length !== 0 &&*/}
+                        {/*    <Marker*/}
+                        {/*        position={markerCar[0]}*/}
+                        {/*        draggable={true}*/}
+                        {/*        icon={myIcon}*/}
+                        {/*        eventHandlers={{*/}
+                        {/*            mouseover: (e) => {*/}
+                        {/*                e.target.openPopup()*/}
+                        {/*            },*/}
+                        {/*            mouseout: (e) => {*/}
+                        {/*                e.target.closePopup()*/}
+                        {/*            }*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <Popup closeOnClick={visible}>*/}
+                        {/*            <div className="popup-info">*/}
+                        {/*                <div className="popup-info__car">*/}
+                        {/*                    <span><b>Машина:</b> Ford Mustang</span>*/}
+                        {/*                    <span><b>Цвет:</b> Черный</span>*/}
+                        {/*                    <span><b>Номер:</b> C430XE</span>*/}
+                        {/*                    <img src={carImg} alt="car"/>*/}
+                        {/*                </div>*/}
+                        {/*                <div className="popup-info__driver">*/}
+                        {/*                    <span><b>Водитель:</b> Евпатий О.В.</span>*/}
+                        {/*                </div>*/}
+                        {/*            </div>*/}
+                        {/*            /!*<button>Удалить</button>*!/*/}
+                        {/*        </Popup>*/}
+                        {/*    </Marker>*/}
+                        {/*}*/}
 
 
 
-                        {markerCar.length !== 0 && markerCar.map((marker,index) =>
-                            <Marker
-                                key={index}
-                                position={marker}
-                                draggable={true}
-                                // icon={car1}
-                                eventHandlers={{
-                                    click: () => {
-                                        console.log('marker clicked')
-                                    },
-                                }}
-                            >
-                                <Popup>
-                                    <div>
-                                        <h1>Машина: FordMustang</h1>
-                                        <span>Цвет: Зеленый</span>
-                                    </div>
-                                    <button>Удалить</button>
-                                </Popup>
+                        {/*{markerCar.length !== 0 && markerCar.map((marker,index) =>*/}
+                        {/*    <Marker*/}
+                        {/*        key={index}*/}
+                        {/*        position={marker}*/}
+                        {/*        draggable={true}*/}
+                        {/*        // icon={car1}*/}
+                        {/*        eventHandlers={{*/}
+                        {/*            click: () => {*/}
+                        {/*                console.log('marker clicked')*/}
+                        {/*            },*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <Popup>*/}
+                        {/*            <div>*/}
+                        {/*                <h1>Машина: FordMustang</h1>*/}
+                        {/*                <span>Цвет: Зеленый</span>*/}
+                        {/*            </div>*/}
+                        {/*            <button>Удалить</button>*/}
+                        {/*        </Popup>*/}
 
-                            </Marker>
-                        )}
+                        {/*    </Marker>*/}
+                        {/*)}*/}
 
 
                         {/*{polyline.map( (poly,index) => {*/}
@@ -551,15 +615,14 @@ const Map = () => {
                             .map( (poly,index) =>
                              <div key={poly._id}>
                                 <Polyline
-                                    // color={activeRoute.roadColor}
                                     pathOptions={{ color: activeRoute.roadColor }}
-                                    positions={poly.router.coordinates}
+                                    positions={poly.router.coordinates.map( item => [item[0].lat, item[0].lng])}
                                 />
 
 
                                  {activeRoute.roadColor === "#ff0000" ?
                                      <>
-                                <Marker position={poly.router.coordinates[0]}>
+                                <Marker position={poly.router.coordinates.map( item => [item[0].lat, item[0].lng])[0]}>
                                     <Popup closeOnClick={visible}>
                                         <div className="popup-info">
                                             <div className="popup-info__car">
@@ -576,7 +639,7 @@ const Map = () => {
                                     </Popup>
                                  </Marker>
 
-                                 <Marker position={poly.router.coordinates[poly.router.coordinates.length -1]}>
+                                 <Marker position={poly.router.coordinates.map( item => [item[0].lat, item[0].lng])[poly.router.coordinates.length - 1]}>
                                      <Popup closeOnClick={visible}>
                                          <div className="popup-info">
                                              <div className="popup-info__car">
@@ -598,7 +661,21 @@ const Map = () => {
                         )}
 
 
-                       {/*{*/}
+                        {flightRoute && copyflightRoute.map(item =>
+                            item.router.routePoints.length !== 0 ? item.router.routePoints.map( mark =>
+                             <Marker
+                                 position={mark.spot.coordinate.reverse()}
+                                 title={mark.spot.name}
+                                 key={mark._id}
+                             >
+                             </Marker>
+                            )
+                            : null
+                        )}
+
+
+
+                        {/*{*/}
                        {/*     loading && pathMarker.map( (coordinatez,index) =>*/}
                        {/*         <Marker*/}
                        {/*             position={showMarker(coordinatez)}*/}
@@ -610,24 +687,25 @@ const Map = () => {
                        {/*    )}*/}
 
                             {/*)}*/}
+
                         {pathMarker.length ?
                         <Marker
                             ref={(ref) => {markerRef.current = ref}}
-                            position={pathMarker}
+                            position={[pathMarker[0].lat, pathMarker[0].lng]}
                             icon={myIcon}
                         >
-                            <Popup closeOnClick={visible}>
-                                <div className="popup-info__car">
-                                    <span><b>Машина:</b>{crewInfo.drivers.vehicle.type_vehicle}</span>
-                                    <span><b>Цвет:</b> Черный</span>
-                                    <span><b>Номер:</b>{crewInfo.drivers.vehicle.license_number}</span>
-                                    <img src={carImg} alt="car"/>
-                                </div>
-                                <div className="popup-info__driver">
-                                    <span><b>Водитель:</b>{crewInfo.drivers.drivers[0].secondName}</span>
-                                </div>
-                                {/*<button>Удалить</button>*/}
-                            </Popup>
+                            {/*<Popup closeOnClick={visible}>*/}
+                            {/*    <div className="popup-info__car">*/}
+                            {/*        <span><b>Машина:</b>{crewInfo.drivers.vehicle.type_vehicle}</span>*/}
+                            {/*        <span><b>Цвет:</b> Черный</span>*/}
+                            {/*        <span><b>Номер:</b>{crewInfo.drivers.vehicle.license_number}</span>*/}
+                            {/*        <img src={carImg} alt="car"/>*/}
+                            {/*    </div>*/}
+                            {/*    <div className="popup-info__driver">*/}
+                            {/*        <span><b>Водитель:</b>{crewInfo.drivers.drivers[0].secondName}</span>*/}
+                            {/*    </div>*/}
+                            {/*    /!*<button>Удалить</button>*!/*/}
+                            {/*</Popup>*/}
                         </Marker> : null}
 
                         {/*{pathMarker.length !== 0 ? <Marker*/}
@@ -666,12 +744,12 @@ const Map = () => {
                         {/*)}*/}
                         {/*{flightRoute[0].router.coordinates.map( item=> console.log(item))}*/}
 
-                        {polyline.length !== 0 && <Polyline positions={polyline} color="red"/>}
-                        {/*<Polyline positions={pos} color="red" />*/}
 
-                        {/*<Marker position={[40.8054, -74.0241]} draggable={true}>*/}
-                        {/*    <Popup>Hey ! I live here</Popup>*/}
-                        {/*</Marker>*/}
+                        {/*{polyline.length !== 0 && <Polyline positions={polyline} color="red"/>}*/}
+
+
+
+                        {/*<Polyline positions={pos} color="red" />*/}
                     </MapContainer>
 
                 </div>

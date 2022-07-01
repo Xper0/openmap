@@ -27,6 +27,7 @@
       z-index: 88;
       border-radius: 20px 20px 10px 10px;
       box-shadow: 2px 1px 0 rgb(0 0 0 / 44%);
+
       .box-title{
         border-bottom-left-radius: 74px;
         border-bottom-right-radius: 74px;
@@ -109,6 +110,13 @@
         }
 
       }
+    }
+    .noDrop{
+      cursor: no-drop;
+    }
+    .disabledbutton {
+      pointer-events: none;
+      opacity: 0.4;
     }
 
     .drag-result{

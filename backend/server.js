@@ -16,7 +16,8 @@ import FlightRouterModel from "./models/FlightRouterModel.js";
 import pointRouter from "./routs/pointRouter.js";
 import spotRouter from "./routs/spotRouter.js";
 import spotEventRouter from "./routs/spotEventRouter.js";
-import routePointRouter from "./routs/routePointRouter.js"; 
+import routePointRouter from "./routs/routePointRouter.js";
+import garageRouter from "./routs/garageRouter.js";
 
 const db = `mongodb+srv://Xper:${process.env.PASSWORD_DB}@cluster0.0ac6y.mongodb.net/${process.env.BLOCK_DB}?retryWrites=true&w=majority`;
 // const db = "mongodb://127.0.0.1:27017/maps";
@@ -109,6 +110,9 @@ app.use("/api", pointRouter);
 app.use("/api", spotRouter);
 app.use("/api", spotEventRouter);
 app.use("/api", routePointRouter);
+app.use("/api", garageRouter);
+
+
 app.listen(port, () => {
   try {
     mongoose.connect(db, {

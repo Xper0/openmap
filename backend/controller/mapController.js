@@ -6,7 +6,18 @@ import SpotServices from "../services/spotServices.js";
 const getRoutes = async (req, res) => {
   try {
     // let geoJSON = await mapOsm.find({})
+
+    // let { id } = req.query
     const routes = await mapRoutes.find({});
+    // const routes = await mapRoutes.find({_id: id})
+    // routes[0]._doc.coordinates =  routes[0]._doc.coordinates.map( coord =>
+    //     [{
+    //       lat: coord[0],
+    //       lng: coord[1]
+    //     }]
+    // )
+    //
+    // await mapRoutes.updateOne({_id: id}, routes[0]._doc)
     res.json({
       status: "ok",
       result: routes,
@@ -23,7 +34,15 @@ const createRoute = async (req, res) => {
   try {
 
     // const route  = JSON.parse(req.body);
-    const { route } = JSON.parse(req.body);
+    console.log(req)
+    const  route  = req.body;
+     route.coordinates = route.coordinates.map( coord =>
+        [{
+          lat: coord[0],
+          lng: coord[1]
+        }]
+    )
+
     await mapRoutes.create(route);
     res.json({
       status: "ok",

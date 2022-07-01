@@ -1,5 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Autocomplete, TextField, Box, Fab, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
+import {
+    Autocomplete,
+    TextField,
+    Box,
+    Fab,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Stack,
+    Stepper, Step, StepLabel
+} from "@mui/material";
 import AppContext from "../../context/Context";
 import AddIcon from '@mui/icons-material/Add';
 import "./flightrouter.scss";
@@ -27,9 +38,12 @@ const FlightRouter = () => {
     } = useContext(AppContext)
 
 
-    const { flightRoute, activeRoute } = useSelector(state => state.mapSlice)
+    const { flightRoute, activeRoute, activeStep } = useSelector(state => state.mapSlice)
     const { activePage, showActiveDetails, showActiveFilter } = useSelector(state => state.activePageSlice)
     const [flightItem, setFlightItem] = useState([])
+
+
+
     const MouseOver = (e, listItem) => {
         dispatch(setActiveRoute({
             roadColor: "#ff0000",
@@ -123,8 +137,36 @@ const FlightRouter = () => {
                                           {listItem.router.titleRoute}
                                         </span>
 
-
                                         </div>
+
+                                        <div className="stepper">
+                                            <Stack sx={{ width: '100%' }} spacing={4}>
+                                                <Stepper
+                                                    alternativeLabel
+                                                    activeStep={activeStep}
+                                                    // connector={<QontoConnector />}
+                                                >
+                                                    {listItem.router.routePoints.length !== 0 ? listItem.router.routePoints.map((label) => (
+                                                        <Step key={label._id}>
+                                                            <StepLabel
+                                                                // StepIconComponent={QontoStepIcon}
+                                                            >{label.spot.name}
+                                                            </StepLabel>
+                                                        </Step>
+                                                    )) : null}
+                                                </Stepper>
+                                            </Stack>
+                                        </div>
+
+
+                                           {/*{listItem.router.routePoints.length !== 0 ?*/}
+                                           {/*    listItem.router.routePoints.map( (routePoints,i) =>*/}
+                                           {/*        <span key={i}>*/}
+                                           {/*              {routePoints.spotEvents.map(accept => accept._id)}*/}
+                                           {/*        </span>*/}
+                                           {/*    )*/}
+                                           {/*    : null }*/}
+
                                         <div
                                             className="flightrouter-item-footer"
                                         >

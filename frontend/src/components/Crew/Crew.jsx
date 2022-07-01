@@ -145,6 +145,14 @@ const Crew = () => {
           window.alert("Не все поля заполнены!")
       }
     }
+    const clearDragBox = () => {
+        dispatch(setInitData({
+            routeBox: [...boxData.routeBox, ...boxData.flightRouteBox],
+            crewBox: [...boxData.crewBox, ...boxData.flightCrewBox],
+            flightRouteBox: [],
+            flightCrewBox: []
+        }))
+    }
     console.log(boxData.flightRouteBox)
 
     return (
@@ -162,61 +170,6 @@ const Crew = () => {
                 <h1>Конструктор рейсов</h1>
             </div>
                 <div className="drag_things_to_boxes">
-                        {/*<div className="box" id="routeGroup"*/}
-                        {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
-                        {/*     onDragOver={handleDragOver}*/}
-                        {/*     onDragLeave={handleDragLeave}*/}
-                        {/*     onDrop={(e) => handleDrop(e, "routeBox")}*/}
-                        {/*>*/}
-                        {/*    <h1>{"Маршруты"}</h1>*/}
-                        {/*    <div>*/}
-                        {/*        {boxData.routeBox.map(item =>*/}
-                        {/*            <div*/}
-                        {/*                key={item.titleRoute}*/}
-                        {/*                className="BoxItem"*/}
-                        {/*                draggable={true}*/}
-                        {/*                onDragStart={(e) => handleDragStart(e, "routeBox", item)}*/}
-                        {/*            >*/}
-                        {/*                <span>{item.titleRoute}</span>*/}
-                        {/*            </div>*/}
-                        {/*        )}*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
-                    {/*<div className="box" id="crewGroup"*/}
-                    {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
-                    {/*     onDragOver={handleDragOver}*/}
-                    {/*     onDragLeave={handleDragLeave}*/}
-                    {/*     onDrop={(e) => handleDrop(e, "crewGroup")}*/}
-                    {/*>*/}
-                    {/*    <h1>{"Экипаж"}</h1>*/}
-                    {/*    <div>*/}
-                    {/*        {initialState.crewGroup.map((item,i) =>*/}
-                    {/*            <div   key={item.titleRoute}*/}
-                    {/*                   className="BoxItem"*/}
-                    {/*                   draggable={true}*/}
-                    {/*                   onDragStart={(e) => handleDragStart(e,  "crewGroup", item)}>*/}
-                    {/*                <span>{item.titleRoute}</span>*/}
-                    {/*            </div>*/}
-                    {/*        )}*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div className="box" id="resultGroup"*/}
-                    {/*     onDragEnter={(e) => handleDragEnter(e)}*/}
-                    {/*     onDragOver={handleDragOver}*/}
-                    {/*     onDragLeave={handleDragLeave}*/}
-                    {/*     onDrop={(e) => handleDrop(e, "flightRouteBox")}*/}
-                    {/*>*/}
-                    {/*    <h1>{"Результат"}</h1>*/}
-                    {/*        {boxData.flightRouteBox.map( (item,index) =>*/}
-                    {/*            <div*/}
-                    {/*                key={index}*/}
-                    {/*                className="BoxItem"*/}
-                    {/*                draggable={true}*/}
-                    {/*                onDragStart={(e) => handleDragStart(e,  "flightRouteBox", item)}>*/}
-                    {/*                {item.titleRoute}*/}
-                    {/*            </div>*/}
-                    {/*        )}*/}
-                    {/*</div>*/}
 
                     <Box className="box" id="routeBox" title={"Маршруты"}>
                             {boxData.routeBox && boxData.routeBox.map((routeItem,i) =>
@@ -372,19 +325,23 @@ const Crew = () => {
                             </div>
                         </div>
                     </div>
-                    <Box className="box" id="crewBox" title={"Экипаж"}>
+                    <Box
+                        className={boxData.flightRouteBox.length !==0 ? "box" : "box noDrop"}
+                        id="crewBox"
+                        title={"Экипаж"}
+                    >
                         {boxData.crewBox && boxData.crewBox
                             .filter(item => boxData.flightRouteBox.length !==0 ? item.vehicle.max_shipment >= (boxData.flightRouteBox[0].shipment.shipment[0].weight).replace(/[^0-9\-\.]/g, '') : item
                             )
                             .map((crewItem,i) => crewItem.drivers.length !== 0 ?
                             <BoxItem
                                 key={i}
-                                className="BoxItem"
+                                className={boxData.flightRouteBox.length !==0 ? "BoxItem": "BoxItem disabledbutton"}
                                 id={"crewBox"}
                                 item={crewItem}
                             >
                                 {crewItem.drivers.map((driver) =>
-                                    <div key={driver.firstName} className="BoxDrag">
+                                    <div key={driver.firstName} className="BoxDrag" >
                                         <li>
                                             <span>ФИО:</span>
                                             <span>{`${driver.secondName} ${driver.firstName.substr(0, 1)}.${driver.middleName.substr(0, 1)}.`}</span>
@@ -578,7 +535,7 @@ const Crew = () => {
                     <Button
                         variant="outlined"
                         // color="error"
-                        // onClick={() => setActivePage(!activePage)}
+                        onClick={() => clearDragBox()}
                     >
                         Очистить
                     </Button>
