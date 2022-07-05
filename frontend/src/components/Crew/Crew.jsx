@@ -13,7 +13,8 @@ import road from "../../assets/roades.json";
 import point from "turf-point";
 import nearestPoint from "@turf/nearest-point";
 import PathFinder from "geojson-path-finder";
-import axios from "axios";
+// import axios from "axios";
+import axios from "../../axios";
 import {Button} from "@mui/material";
 import {setFlightRoute} from "../../redux/features/mapSlice";
 import {socket} from "../../socket";
@@ -124,7 +125,10 @@ const Crew = () => {
              date: new Date(),
              // shipment: boxData.flightShipment[0]._id
          }
-          const {data} = await axios.post("http://127.0.0.1:5000/api/flightRouter", obj)
+          // const {data} = await axios.post("http://127.0.0.1:5000/api/flightRouter", obj)
+          console.log(obj)
+          const {data} = await axios.post("/flightRouter",obj)
+          console.log(data)
           console.log(data.message)
           setFetching(true)
           if (data.message === "Рейс добавлен") {

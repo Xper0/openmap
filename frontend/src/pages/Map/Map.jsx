@@ -4,8 +4,8 @@ import {MapContainer, TileLayer, useMap, Popup, GeoJSON,Marker, useMapEvents, Po
 // import Marker from 'react-leaflet-animated-marker';
 // import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import "leaflet-defaulticon-compatibility";
+// import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+// import "leaflet-defaulticon-compatibility";
 import Header from "../../components/Header/Header";
 import {FormControl, InputLabel, Select, MenuItem, List} from "@mui/material";
 import road from "../../assets/roades.json";
@@ -20,7 +20,8 @@ import Playback from "leaflet-play/Gruntfile";
 import {DragDropContainer, DropTarget} from 'react-drag-drop-container';
 import Box from "../../components/Box/Box";
 import BoxItem from "../../components/BoxItem/BoxItem";
-import axios from "axios";
+// import axios from "axios";
+import axios from "../../axios";
 import AppContext from "../../context/Context";
 import Sidebar from "../../components/SideBar/SideBar";
 import FlightRouter from "../../components/FlightRouter/FlightRouter";
@@ -30,12 +31,13 @@ import demo from "leaflet-react-track-player/src/demo2";
 import {setActiveRoute, setCheckRoute, setFlightRoute} from "../../redux/features/mapSlice";
 import { useSelector, useDispatch } from 'react-redux'
 import SideBarRight from "../../components/SideBarRight/SideBarRight";
+import {socket} from "../../socket";
 
 let TimerCounter = 0
 const Map = () => {
-    const {fetching, setFetching, setActivePage,coordinates, setCoordinates, loading, setLoading, crew, setCrew} = useContext(AppContext)
+    const {fetching, setFetching,coordinates} = useContext(AppContext)
 
-    const  { flightRoute, activeRoute } = useSelector( state => state.mapSlice)
+    const  { flightRoute, activeRoute, carMarker } = useSelector( state => state.mapSlice)
     const { activePage } = useSelector(state => state.activePageSlice);
     const dispatch = useDispatch();
     // const [activePage, setActivePage] = useState(true)
@@ -78,12 +80,26 @@ const Map = () => {
             },
 
         })
+        useEffect(() => {
+            if (flightRoute.length !== 0){
+                socket.send(JSON.stringify({
+                    method: "markerTimer",
+                    flightRoute
+                }))
+            }
+        },[flightRoute])
+        // useEffect(() => {
+        //     console.log(carMarker)
+        //     if (carMarker.length !== 0) {
+        //         setPathMarker(carMarker)
+        //     }
+        // },[carMarker])
 
         useEffect(() => {
             if (flightRoute.length !== 0 && counter <= flightRoute[3].router.coordinates.length){
                 let timerRef;
                 // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
-                timerRef = setInterval(setMarkerMachine, 5000)
+                // timerRef = setInterval(setMarkerMachine, 5000)
 
                 // let timerRef= setInterval(() => {
                 //
@@ -146,7 +162,8 @@ const Map = () => {
 
     const reloadPage = async () => {
         const [flightData] = await Promise.all([
-            axios.get("http://127.0.0.1:5000/api/flightRouter"),
+            // axios.get("http://127.0.0.1:5000/api/flightRouter"),
+            axios.get("/lightRouter")
         ])
         await dispatch(setFlightRoute(flightData.data.message))
     }
@@ -688,10 +705,10 @@ const Map = () => {
 
                             {/*)}*/}
 
-                        {pathMarker.length ?
+                        {carMarker.length ?
                         <Marker
                             ref={(ref) => {markerRef.current = ref}}
-                            position={[pathMarker[0].lat, pathMarker[0].lng]}
+                            position={[carMarker[0].lat, carMarker[0].lng]}
                             icon={myIcon}
                         >
                             {/*<Popup closeOnClick={visible}>*/}

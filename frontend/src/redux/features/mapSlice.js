@@ -1,4 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit'
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
+import axios from "../../axios";
+
+
+
+export const fetchFlightRouter = createAsyncThunk("map/flightRouter", async () =>{
+    const [ flightData] = await Promise.all([
+        axios.get("/flightRouter"),
+    ])
+    return {
+        flightRoute: flightData.data.message,
+    }
+})
+
 
 const initialState = {
     coordinates: [],
@@ -8,7 +21,8 @@ const initialState = {
         roadColor: "#808080",
         flightRoute: []
     },
-    activeStep: 0
+    activeStep: 0,
+    carMarker: []
 
 }
 
@@ -31,10 +45,18 @@ export const mapSlice = createSlice({
         setCheckRoute: (state, action) => {
             state.activeStep = action.payload
         },
+        setCarMarker: (state, action) => {
+            state.carMarker = action.payload
+        },
     },
+    extraReducers: {
+        [fetchFlightRouter.fulfilled]: (state, action) => {
+            state.flightRoute = action.payload.flightRoute;
+        }
+    }
 })
 
 
-export const { setCoordinates, setCrew, setFlightRoute, setActiveRoute, setCheckRoute } = mapSlice.actions
+export const { setCoordinates, setCrew, setFlightRoute, setActiveRoute, setCheckRoute, setCarMarker } = mapSlice.actions
 
 export default mapSlice.reducer
