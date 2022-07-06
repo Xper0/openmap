@@ -4,16 +4,17 @@ import FlightService from "../services/FlightRouterService.js";
 
 const findFlightRouter = async (req, res) => {
     try {
-        const {id,top, skip} = req.query;
+        // const {id,top, skip} = req.query;
+        const id = req.query.id
         if (!id) {
             const find = await FlightService().findAllFlightRouter();
-            const sliceFind = find.slice(skip, top)
+            // const sliceFind = find.slice(skip, top)
             res.status(200).json({
-                message: sliceFind
+                message: find
             })
         }
         else {
-            const find = await FlightService().findOneFlightRouter({drivers: id})
+            const find = await FlightService().findOneFlightRouter(id)
             // let find = await Flight.findOne({router: flight.routeId, drivers: flight.driverId, shipment: flight.shipmentId})
             res.status(200).json({
                 message: find

@@ -5,7 +5,7 @@ import CrewService from "../services/CrewRouterService.js";
 const findCrew = async (req, res) => {
     try {
         let {top, skip} =  req.query;
-        let crewId = req.params.id
+        let crewId = req.query.id
         // const find = await CrewModel.findOne({_id: crewId})
         if (!crewId) {
             const find = await CrewService().findAllCrew();
@@ -14,7 +14,7 @@ const findCrew = async (req, res) => {
                 message: sliceFind
             })
         } else {
-            const find = await CrewService().findOneCrew({drivers: crewId})
+            const find = await CrewService().findOneCrew(crewId)
             // const find = await CrewModel.findOne({employee: id.employee, vehicle: id.vehicle}).populate("employee").populate("vehicle")
             // const find = await CrewModel.findOne({employee: id.employee, vehicle: id.vehicle})
             // console.log(find)
