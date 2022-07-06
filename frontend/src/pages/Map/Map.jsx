@@ -635,8 +635,6 @@ const Map = () => {
                                     pathOptions={{ color: activeRoute.roadColor }}
                                     positions={poly.router.coordinates.map( item => [item[0].lat, item[0].lng])}
                                 />
-
-
                                  {activeRoute.roadColor === "#ff0000" ?
                                      <>
                                 <Marker position={poly.router.coordinates.map( item => [item[0].lat, item[0].lng])[0]}>
