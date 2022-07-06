@@ -87,7 +87,7 @@ const FlightRouter = () => {
                     <h3>Фильтр</h3>
                 </div>
                 <div className="search__container">
-                    <input className="search__input" type="text" placeholder="Search" />
+                    <input className="search__input" type="text" placeholder="Поиск..." />
                 </div>
                 <Fab
                     color="primary"

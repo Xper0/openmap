@@ -14,7 +14,7 @@ const findCrew = async (req, res) => {
                 message: sliceFind
             })
         } else {
-            const find = await CrewService().findOneCrew(crewId)
+            const find = await CrewService().findOneCrew({drivers: crewId})
             // const find = await CrewModel.findOne({employee: id.employee, vehicle: id.vehicle}).populate("employee").populate("vehicle")
             // const find = await CrewModel.findOne({employee: id.employee, vehicle: id.vehicle})
             // console.log(find)
@@ -37,11 +37,37 @@ const findCrew = async (req, res) => {
 }
 
 const createCrew = async (req, res) => {
-    const crew = req.query
-    await CrewService().addCrew(crew)
-    res.status(200).json({
-        message: "Экипаж добавлен"
-    })
+    try {
+        // console.log(req.body)
+        const crewBody = req.body
+        // const crew = req.query
+        if (crewBody){
+            const findCrew = await CrewModel.findOne({drivers: crewBody.drivers})
+            if (findCrew){
+                await  CrewModel.updateOne({drivers: crewBody.drivers}, {$set: {vehicle: crewBody.vehicle}})
+                res.status(200).json({
+                    message: "Экипаж добавлен"
+                })
+            }else {
+                await CrewService().addCrew(crewBody)
+                res.status(200).json({
+                    message: "Экипаж добавлен"
+                })
+            }
+
+        }
+        else {
+            res.status(200).json({
+                message: "Экипаж не добавлен "
+            })
+        }
+    } catch (err) {
+        res.status(403).json({
+            message: "Ошибка создания экипажа" + err
+        })
+    }
+
+
 
 }
 

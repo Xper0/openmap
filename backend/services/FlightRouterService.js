@@ -6,7 +6,7 @@ const FlightService = () => {
             return FlightRouterModel.find({});
         },
         findOneFlightRouter:  (id) => {
-            return FlightRouterModel.findOne({_id: id});
+            return FlightRouterModel.findOne({drivers: id});
         },
         addFlightRouter: (flightRouter) => {
             return FlightRouterModel.create(flightRouter)

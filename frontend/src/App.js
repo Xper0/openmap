@@ -90,18 +90,25 @@ function App() {
         getData()
     },[])
 
+    // let arr = [];
     useEffect(() => {
+        let arr = [];
        // socket = new WebSocket("ws://127.0.0.1:7000");
        //  console.log("server ON")
             socket.onopen = (msg) => {
 
             }
             socket.onmessage = (response) => {
-                // console.log(response)
+
                 let oMessage = JSON.parse(response.data)
-                console.log(oMessage)
+                oMessage = Object.assign([], oMessage)
+
                 if (oMessage.method  === "markerTimer") {
+                    // arr.push(oMessage.coordinate)
+                    // console.log(arr)
                     dispatch(setCarMarker(oMessage.coordinate))
+                    // arr = []
+
                 }
             }
 
@@ -128,7 +135,6 @@ function App() {
         // }
 
     },[loading])
-
     // useEffect(() => {
     //     (async () => {
     //         if (fetching) {

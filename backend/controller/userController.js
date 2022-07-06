@@ -13,6 +13,10 @@ const Registration = async ( req, res ) => {
     const findUser = await Users.findOne({email: user.email})
     if (!findUser){
       await Users.create(user)
+      res.json({
+        status: "ok",
+        msg: "Юзер зарегистрирован"
+      })
     } if (findUser) {
       res.status(302).json({
         message: `Пользователь с таким email - ${user.email} уже зарагестрирован`

@@ -87,7 +87,7 @@ const wss = new WebSocketServer({ server: httpServer });
 // const wss = new WebSocketServer({ port: 7000})
 
 wss.on("connection",  (ws) => {
-  setInterval(setMarkerMachine.bind(null, ws), 5000);
+  setInterval(setMarkerMachine.bind(null, ws), 3000);
   ws.send(JSON.stringify('socket is online'))
   ws.on("message", async (body, isBinary) => {
     body = JSON.parse(body)
@@ -143,39 +143,17 @@ function sendNewCoords(flightRoute, ws) {
 let counter = 0
 async function setMarkerMachine(ws) {
   let data = await axios.get("https://apiopenmap.herokuapp.com/api/flightRouter");
-     data.data.message.forEach(item => {
-       if (counter < item.router.coordinates.length){
+  let arr = []
+     data.data.message
+         .filter(item => counter < item.router.coordinates.length)
+         .forEach(item => {
          counter++
-
-       }else{
-         counter = 0
-       }
-
-       ws.send(JSON.stringify({
-         method: "markerTimer",
-         coordinate: item.router.coordinates[counter],
-         coor: [
-           {
-             name: item.router.titleRoute,
-             coordinate: item.router.coordinates[counter]
-           }
-         ]
-       }))
-
+       arr.push(item.router.coordinates[counter])
       })
-      if (counter < data.data.message[3].router.coordinates.length){
-        counter++
-
-      }else{
-        counter = 0
-      }
-
-        ws.send(JSON.stringify({
-          method: "markerTimer",
-          coordinate: data.data.message[3].router.coordinates[counter]
-        }))
-
-
+    ws.send(JSON.stringify({
+      method: "markerTimer",
+      coordinate: arr,
+    }))
 }
 
 function ArrayPlusDelay(array) {

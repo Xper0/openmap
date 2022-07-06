@@ -13,7 +13,7 @@ const findFlightRouter = async (req, res) => {
             })
         }
         else {
-            const find = await FlightService().findOneFlightRouter(id)
+            const find = await FlightService().findOneFlightRouter({drivers: id})
             // let find = await Flight.findOne({router: flight.routeId, drivers: flight.driverId, shipment: flight.shipmentId})
             res.status(200).json({
                 message: find

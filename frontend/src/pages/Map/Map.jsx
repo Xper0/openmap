@@ -94,60 +94,60 @@ const Map = () => {
         //         setPathMarker(carMarker)
         //     }
         // },[carMarker])
-
-        useEffect(() => {
-            if (flightRoute.length !== 0 && counter <= flightRoute[3].router.coordinates.length){
-                let timerRef;
-                // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
-                // timerRef = setInterval(setMarkerMachine, 5000)
-
-                // let timerRef= setInterval(() => {
-                //
-                //         setPathMarker(flightRoute[0].router.coordinates[i])
-                //     setCounter(prev => prev + 1)
-                //         // i++
-                //
-                //
-                //     }
-                //     ,100)
-                return () => {
-                    clearInterval(timerRef)
-                }
-            }
-
-            // if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
-            //     let timerRef;
-            //     // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
-            //     timerRef = setInterval(setMarkerMachine, 1000)
-            //
-            //     // let timerRef= setInterval(() => {
-            //     //
-            //     //         setPathMarker(flightRoute[0].router.coordinates[i])
-            //     //     setCounter(prev => prev + 1)
-            //     //         // i++
-            //     //
-            //     //
-            //     //     }
-            //     //     ,100)
-            //     return () => {
-            //         clearInterval(timerRef)
-            //     }
-            // }
-
-        }, [counter])
+        //
+        // useEffect(() => {
+        //     if (flightRoute.length !== 0 && counter <= flightRoute[3].router.coordinates.length){
+        //         let timerRef;
+        //         // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
+        //         // timerRef = setInterval(setMarkerMachine, 5000)
+        //
+        //         // let timerRef= setInterval(() => {
+        //         //
+        //         //         setPathMarker(flightRoute[0].router.coordinates[i])
+        //         //     setCounter(prev => prev + 1)
+        //         //         // i++
+        //         //
+        //         //
+        //         //     }
+        //         //     ,100)
+        //         return () => {
+        //             clearInterval(timerRef)
+        //         }
+        //     }
+        //
+        //     // if (flightRoute.length !== 0 && counter <= flightRoute[0].router.coordinates.length){
+        //     //     let timerRef;
+        //     //     // timerRef = setInterval(setMarkerMachine.bind(timerRef), 4000)
+        //     //     timerRef = setInterval(setMarkerMachine, 1000)
+        //     //
+        //     //     // let timerRef= setInterval(() => {
+        //     //     //
+        //     //     //         setPathMarker(flightRoute[0].router.coordinates[i])
+        //     //     //     setCounter(prev => prev + 1)
+        //     //     //         // i++
+        //     //     //
+        //     //     //
+        //     //     //     }
+        //     //     //     ,100)
+        //     //     return () => {
+        //     //         clearInterval(timerRef)
+        //     //     }
+        //     // }
+        //
+        // }, [counter])
 
     }
     useEffect(() => {
         if (flightRoute.length !== 0) {
-            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[3].router.coordinates[40].reverse())) {
+            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[0].router.coordinates[40].reverse())) {
                 console.log("start")
                 dispatch(setCheckRoute(1))
             }
-            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[3].router.coordinates[150].reverse())) {
+            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[0].router.coordinates[150].reverse())) {
                 console.log("middle")
                 dispatch(setCheckRoute(2))
             }
-            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[3].router.coordinates[960].reverse())) {
+            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[0].router.coordinates[960].reverse())) {
                 console.log("end")
                 dispatch(setCheckRoute(3))
             }
@@ -163,7 +163,7 @@ const Map = () => {
     const reloadPage = async () => {
         const [flightData] = await Promise.all([
             // axios.get("http://127.0.0.1:5000/api/flightRouter"),
-            axios.get("/lightRouter")
+            axios.get("/flightRouter")
         ])
         await dispatch(setFlightRoute(flightData.data.message))
     }
@@ -431,7 +431,7 @@ const Map = () => {
     //    let interval = setInterval(changeCoord,4000)
     //     // clearInterval(interval)
     // })
-
+    {console.log(carMarker)}
 
     return (
         <div className="Map-container">
@@ -678,17 +678,17 @@ const Map = () => {
                         )}
 
 
-                        {flightRoute && copyflightRoute.map(item =>
-                            item.router.routePoints.length !== 0 ? item.router.routePoints.map( mark =>
-                             <Marker
-                                 position={mark.spot.coordinate.reverse()}
-                                 title={mark.spot.name}
-                                 key={mark._id}
-                             >
-                             </Marker>
-                            )
-                            : null
-                        )}
+                        {/*{flightRoute && copyflightRoute.map(item =>*/}
+                        {/*    item.router.routePoints.length !== 0 ? item.router.routePoints.map( mark =>*/}
+                        {/*     <Marker*/}
+                        {/*         position={mark.spot.coordinate.reverse()}*/}
+                        {/*         title={mark.spot.name}*/}
+                        {/*         key={mark._id}*/}
+                        {/*     >*/}
+                        {/*     </Marker>*/}
+                        {/*    )*/}
+                        {/*    : null*/}
+                        {/*)}*/}
 
 
 
@@ -705,25 +705,34 @@ const Map = () => {
 
                             {/*)}*/}
 
-                        {carMarker.length ?
-                        <Marker
-                            ref={(ref) => {markerRef.current = ref}}
-                            position={[carMarker[0].lat, carMarker[0].lng]}
-                            icon={myIcon}
-                        >
-                            {/*<Popup closeOnClick={visible}>*/}
-                            {/*    <div className="popup-info__car">*/}
-                            {/*        <span><b>Машина:</b>{crewInfo.drivers.vehicle.type_vehicle}</span>*/}
-                            {/*        <span><b>Цвет:</b> Черный</span>*/}
-                            {/*        <span><b>Номер:</b>{crewInfo.drivers.vehicle.license_number}</span>*/}
-                            {/*        <img src={carImg} alt="car"/>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="popup-info__driver">*/}
-                            {/*        <span><b>Водитель:</b>{crewInfo.drivers.drivers[0].secondName}</span>*/}
-                            {/*    </div>*/}
-                            {/*    /!*<button>Удалить</button>*!/*/}
-                            {/*</Popup>*/}
-                        </Marker> : null}
+                        {carMarker &&
+                            carMarker.map( marker =>
+
+                                marker !== null ? (
+                                <Marker
+                                    // ref={(ref) => {markerRef.current = ref}}
+                                    position={[marker[0].lat, marker[0].lng]}
+                                    icon={myIcon}
+                                >
+                                    {/*<Popup closeOnClick={visible}>*/}
+                                    {/*    <div className="popup-info__car">*/}
+                                    {/*        <span><b>Машина:</b>{crewInfo.drivers.vehicle.type_vehicle}</span>*/}
+                                    {/*        <span><b>Цвет:</b> Черный</span>*/}
+                                    {/*        <span><b>Номер:</b>{crewInfo.drivers.vehicle.license_number}</span>*/}
+                                    {/*        <img src={carImg} alt="car"/>*/}
+                                    {/*    </div>*/}
+                                    {/*    <div className="popup-info__driver">*/}
+                                    {/*        <span><b>Водитель:</b>{crewInfo.drivers.drivers[0].secondName}</span>*/}
+                                    {/*    </div>*/}
+                                    {/*    /!*<button>Удалить</button>*!/*/}
+                                    {/*</Popup>*/}
+                                </Marker>
+                            )
+                                    :null)
+
+                    }
+
+
 
                         {/*{pathMarker.length !== 0 ? <Marker*/}
                         {/*    position={pathMarker}*/}
