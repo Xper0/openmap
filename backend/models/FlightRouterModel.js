@@ -21,6 +21,14 @@ const flightRouteSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Shipments",
         autopopulate: true
+    },
+    acceptRoute: {
+        type: Boolean,
+        default: false
+    },
+    _delete: {
+        type: Boolean,
+        default: false
     }
 })
 

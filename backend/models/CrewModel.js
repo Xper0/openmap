@@ -14,7 +14,12 @@ const crewRouteSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Vehicles",
         autopopulate: true
+    },
+    _delete: {
+        type: Boolean,
+        default: false
     }
+
 })
 
 crewRouteSchema.plugin(mongooseAutoPopulate)

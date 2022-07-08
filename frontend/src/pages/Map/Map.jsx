@@ -4,8 +4,8 @@ import {MapContainer, TileLayer, useMap, Popup, GeoJSON,Marker, useMapEvents, Po
 // import Marker from 'react-leaflet-animated-marker';
 // import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.css";
-// import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-// import "leaflet-defaulticon-compatibility";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import "leaflet-defaulticon-compatibility";
 import Header from "../../components/Header/Header";
 import {FormControl, InputLabel, Select, MenuItem, List} from "@mui/material";
 import road from "../../assets/roades.json";
@@ -139,15 +139,17 @@ const Map = () => {
     }
     useEffect(() => {
         if (flightRoute.length !== 0) {
-            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[0].router.coordinates[40].reverse())) {
+            // console.log(copyflightRoute[0].router.coordinates[0])
+            console.log(JSON.stringify(carMarker[0]) === JSON.stringify( copyflightRoute[0].router.coordinates[1]))
+            if (JSON.stringify(carMarker[0]) === JSON.stringify( copyflightRoute[0].router.coordinates[1])) {
                 console.log("start")
                 dispatch(setCheckRoute(1))
             }
-            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[0].router.coordinates[150].reverse())) {
+            if (JSON.stringify(carMarker[0]) === JSON.stringify( copyflightRoute[0].router.coordinates[150])) {
                 console.log("middle")
                 dispatch(setCheckRoute(2))
             }
-            if (JSON.stringify(pathMarker) === JSON.stringify( copyflightRoute[0].router.coordinates[960].reverse())) {
+            if (JSON.stringify(carMarker[0]) === JSON.stringify( copyflightRoute[0].router.coordinates[960])) {
                 console.log("end")
                 dispatch(setCheckRoute(3))
             }
@@ -158,7 +160,7 @@ const Map = () => {
                 // ) : null)
         }
 
-    },[pathMarker])
+    },[carMarker])
 
     const reloadPage = async () => {
         const [flightData] = await Promise.all([
@@ -431,8 +433,6 @@ const Map = () => {
     //    let interval = setInterval(changeCoord,4000)
     //     // clearInterval(interval)
     // })
-    {console.log(carMarker)}
-
     return (
         <div className="Map-container">
             <div>
@@ -637,7 +637,10 @@ const Map = () => {
                                 />
                                  {activeRoute.roadColor === "#ff0000" ?
                                      <>
-                                <Marker position={poly.router.coordinates.map( item => [item[0].lat, item[0].lng])[0]}>
+                                <Marker position={
+                                    poly.router.coordinates.map( item => [item[0].lat, item[0].lng])[0]
+                                }
+                                >
                                     <Popup closeOnClick={visible}>
                                         <div className="popup-info">
                                             <div className="popup-info__car">
@@ -704,10 +707,11 @@ const Map = () => {
                             {/*)}*/}
 
                         {carMarker &&
-                            carMarker.map( marker =>
+                            carMarker.map( (marker,i) =>
 
                                 marker !== null ? (
                                 <Marker
+                                    key={i}
                                     // ref={(ref) => {markerRef.current = ref}}
                                     position={[marker[0].lat, marker[0].lng]}
                                     icon={myIcon}

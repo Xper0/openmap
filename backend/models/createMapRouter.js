@@ -20,12 +20,12 @@ const mapRouteSchema = new Schema({
   //   type: Array
   // },
   coordinates: [
-      [
-        {
-          lat: {type: Number},
-          lng: {type: Number}
-        }
-      ]
+    [
+      {
+        lat: {type: Number},
+        lng: {type: Number}
+      }
+    ]
   ],
   shipment: {
     type: mongoose.Schema.Types.ObjectId,
@@ -42,6 +42,10 @@ const mapRouteSchema = new Schema({
   weight: {
     type: Number,
   },
+  _delete: {
+    type: Boolean,
+    default: false
+  }
 })
 
 mapRouteSchema.plugin(mongooseAutoPopulate)

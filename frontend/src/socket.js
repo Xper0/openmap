@@ -1,7 +1,7 @@
-export const socket = new WebSocket("ws://127.0.0.1:5000");
+// export const socket = new WebSocket("ws://127.0.0.1:5000");
 
 //for heroku
-// export const socket = new WebSocket("wss://apiopenmap.herokuapp.com");
+export const socket = new WebSocket("wss://apiopenmap.herokuapp.com");
 
 
 // socket.onopen = (msg) => {
