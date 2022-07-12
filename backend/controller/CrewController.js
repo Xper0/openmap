@@ -1,5 +1,7 @@
 import CrewModel from "../models/CrewModel.js";
 import CrewService from "../services/CrewRouterService.js";
+import {wss} from "../server.js";
+import WebSocket from "ws";
 
 
 const findCrew = async (req, res) => {
@@ -54,6 +56,14 @@ const createCrew = async (req, res) => {
                     message: "Экипаж добавлен"
                 })
             }
+            wss.clients.forEach( (client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({
+                        result: "Crew add"
+                    }))
+
+                }
+            })
 
         }
         else {
@@ -61,6 +71,7 @@ const createCrew = async (req, res) => {
                 message: "Экипаж не добавлен "
             })
         }
+
     } catch (err) {
         res.status(403).json({
             message: "Ошибка создания экипажа" + err

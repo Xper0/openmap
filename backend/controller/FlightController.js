@@ -1,5 +1,7 @@
 import FlightService from "../services/FlightRouterService.js";
 import spotEventServices from "../services/spotEventServices.js";
+import broadcastMessages, {wss} from "../server.js";
+import WebSocket from "ws";
 
 const findFlightRouter = async (req, res) => {
   try {
@@ -44,7 +46,28 @@ const createFlightRouter = async (req, res) => {
   try {
     // const flight = req.query;
     const flight = req.body;
-    await FlightService().addFlightRouter(flight);
+    const aboutFlight = await FlightService().addFlightRouter(flight);
+    wss.clients.forEach( (client) => {
+      client.id = flight.drivers
+      if (client.readyState === WebSocket.OPEN) {
+        // console.log(client.id)
+        // console.log(flight)
+        if(client.id === flight.drivers) {
+          client.send(JSON.stringify(aboutFlight._doc));
+        }
+      }
+    });
+
+
+    // broadcastMessages(null, {driverId: aboutFlight._doc.drivers._doc._id , body: aboutFlight._doc})
+    // wss.clients.forEach( (client) => {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     client.send(JSON.stringify({
+    //       result: aboutFlight._doc
+    //     }))
+    //
+    //   }
+    // })
     res.status(200).json({
       message: "Рейс добавлен",
     });

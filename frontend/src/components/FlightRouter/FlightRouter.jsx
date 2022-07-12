@@ -25,6 +25,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { setActivePage, setShowActiveDetails, setShowActiveFilter } from "../../redux/features/activePageSlice";
 import Listroute from "../Listroute/Listroute";
 import Details from "../Details/Details";
+import {socket} from "../../socket";
 
 const FlightRouter = () => {
     const dispatch = useDispatch()
@@ -41,6 +42,7 @@ const FlightRouter = () => {
     const { flightRoute, activeRoute, activeStep } = useSelector(state => state.mapSlice)
     const { activePage, showActiveDetails, showActiveFilter } = useSelector(state => state.activePageSlice)
     const [flightItem, setFlightItem] = useState([])
+    const [alarmMessage, setAlarmMessage] = useState("")
 
 
 
@@ -60,6 +62,16 @@ const FlightRouter = () => {
     const getDetails = (listItem) => {
         dispatch(setShowActiveDetails(showActiveDetails))
         setFlightItem(listItem)
+    }
+    const sendMessage = () => {
+        if (alarmMessage.length !== 0){
+            socket.send(JSON.stringify({
+                method: "alarmMessage",
+                message: alarmMessage
+            }))
+        }else {
+            window.alert("Поле не заполнено!")
+        }
     }
     // useEffect(() => {
     //     (async () => {
@@ -207,8 +219,11 @@ const FlightRouter = () => {
                     {/*    </div>*/}
                     {/*</Listroute>*/}
                 </div>
-
             </div>
+                    <div>
+                        <input value={alarmMessage} onChange={ e => setAlarmMessage(e.target.value)} placeholder="Предупреждение" />
+                        <button onClick={() => sendMessage()}>Отправить</button>
+                    </div>
             {/*<div className="flightrouter-content">*/}
             {/*    <Listroute>*/}
             {/*        <div className="flightrouter-item-container">*/}

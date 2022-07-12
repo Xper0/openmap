@@ -81,7 +81,7 @@ const Map = () => {
 
         })
         useEffect(() => {
-            if (flightRoute.length !== 0){
+            if (flightRoute.length !== 0 && socket.readyState === WebSocket.OPEN){
                 socket.send(JSON.stringify({
                     method: "markerTimer",
                     flightRoute
@@ -173,6 +173,7 @@ const Map = () => {
 
     useEffect(() => {
         try {
+            console.log(fetching)
             if (fetching === true){
                 reloadPage()
                setFetching(false)

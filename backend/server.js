@@ -20,6 +20,8 @@ import routePointRouter from "./routs/routePointRouter.js";
 import garageRouter from "./routs/garageRouter.js";
 import  http  from "http";
 import axios from "axios";
+import {findCrew} from "./controller/CrewController.js";
+import ReadyDrivers from "./models/ReadyDriversModel.js";
 
 
 const db = `mongodb+srv://Xper:${process.env.PASSWORD_DB}@cluster0.0ac6y.mongodb.net/${process.env.BLOCK_DB}?retryWrites=true&w=majority`;
@@ -82,12 +84,12 @@ httpServer.listen(port, () => {
  * Socket
  */
 
-const wss = new WebSocketServer({ server: httpServer });
+export const wss = new WebSocketServer({ server: httpServer });
 // const wss = new WebSocketServer({ port })
 // const wss = new WebSocketServer({ port: 7000})
 
 wss.on("connection",  (ws) => {
-  setInterval(setMarkerMachine.bind(null, ws), 3000);
+  // setInterval(setMarkerMachine.bind(null, ws), 3000);
   ws.send(JSON.stringify('socket is online'))
   ws.on("message", async (body, isBinary) => {
     body = JSON.parse(body)
@@ -97,6 +99,19 @@ wss.on("connection",  (ws) => {
         break
       case "markerTimer":
         // sendNewCoords(body, ws)
+        break
+      case "createCrew":
+        await sendCrewData(ws, body)
+            break;
+      case "alarmMessage":
+        wss.clients.forEach( client => {
+          client.send(JSON.stringify({
+           message: body
+          }))
+        })
+        break
+      case "waitingLine":
+         checkWaitingLine(ws, body)
         break
       default:
         break
@@ -111,12 +126,38 @@ wss.on("connection",  (ws) => {
     // }
   });
 })
+async function sendCrewData(ws,body) {
+  try {
+    let data = await axios.get(`https://apiopenmap.herokuapp.com/api/crew?id=${body.driverId}`);
+    // let crewData = findCrew(body.driverId);
+    console.log(data)
+    ws.id = body.driverId
+    if (data){
+      ws.send(JSON.stringify({
+        result: data
+      }))
+    }else{
+      ws.send(JSON.stringify({
+        result: "Экипаж не найден"
+      }))
+    }
+  }catch (err){
+    console.log(err)
+  }
+
+
+}
 
 function connectionHandler(ws,msg) {
   // msg = JSON.parse(msg)
   ws.id = msg.driverId
   // ws.id = msg[0].drivers._id
   broadcastMessages(ws, msg)
+}
+async function checkWaitingLine(ws, body) {
+  let waitingLineList = await ReadyDrivers.findOne({})
+  console.log(waitingLineList)
+  console.log(body)
 }
 
 // function sendNewCoords(flightRoute) {
@@ -200,20 +241,27 @@ function ArrayPlusDelay(array) {
 
 
 
-function broadcastMessages (ws,msg) {
+export default function broadcastMessages (ws,msg) {
   wss.clients.forEach(async (client) => {
     if (client.readyState === WebSocket.OPEN) {
       // if(client.id === msg[0].drivers._id) {
       if(client.id === msg.driverId) {
-        // const id = msg[0].drivers._id
-        const id = msg.driverId
-        const flightRoute = await FlightRouterModel.findOne({drivers: id})
-        if (flightRoute) {
-          client.send(JSON.stringify(flightRoute._doc));
-        } else {
+        // if (msg.hasOwnProperty("body")){
+        //   console.log("body")
+        //   client.send(JSON.stringify(msg));
+        // }
           client.send(JSON.stringify("Маршрут еще не назначен"))
-        }
       }
+      // if(client.id === msg.driverId) {
+      //   // const id = msg[0].drivers._id
+      //   const id = msg.driverId
+      //   const flightRoute = await FlightRouterModel.findOne({drivers: id})
+      //   if (flightRoute) {
+      //     client.send(JSON.stringify(flightRoute._doc));
+      //   } else {
+      //     client.send(JSON.stringify("Маршрут еще не назначен"))
+      //   }
+      // }
       // }
     }
   });
