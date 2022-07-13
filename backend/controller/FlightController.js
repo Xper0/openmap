@@ -53,7 +53,11 @@ const createFlightRouter = async (req, res) => {
         // console.log(client.id)
         // console.log(flight)
         if(client.id === flight.drivers) {
-          client.send(JSON.stringify(aboutFlight._doc));
+          client.send(JSON.stringify({
+            method: "addFlightRoute",
+            ...aboutFlight._doc
+          }
+             ));
         }
       }
     });

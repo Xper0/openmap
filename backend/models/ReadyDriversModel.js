@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const readyDriversSchema = new Schema({
     drivers: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Crew",
+        ref: "Crews",
         autopopulate: true
     }]
 })

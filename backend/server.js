@@ -106,7 +106,7 @@ wss.on("connection",  (ws) => {
       case "alarmMessage":
         wss.clients.forEach( client => {
           client.send(JSON.stringify({
-           message: body
+           ...body
           }))
         })
         break
@@ -153,11 +153,30 @@ function connectionHandler(ws,msg) {
   ws.id = msg.driverId
   // ws.id = msg[0].drivers._id
   broadcastMessages(ws, msg)
+  checkWaitingLine(ws,msg)
 }
 async function checkWaitingLine(ws, body) {
-  let waitingLineList = await ReadyDrivers.findOne({})
-  console.log(waitingLineList)
-  console.log(body)
+  // let waitingLineList = await ReadyDrivers.find({});
+  let {data} = await axios("http://127.0.0.1:5000/api/readydriver");
+  // let {data} = await axios("https://apiopenmap.herokuapp.com/api/readydriver");
+  let findIndex = data.message.findIndex( index => index.length !==0 ? index.drivers[0].drivers[0]._id === body.profileId : -1);
+  // let findIndex = data.message.findIndex( index => index.drivers[0].drivers._id === body.profileId);
+  // let findIndex = data.message.findIndex( index => index._id === body.profileId);
+  console.log(findIndex)
+  if (findIndex !== -1) {
+    ws.send(JSON.stringify({
+      method: "waitingLine",
+      message: findIndex + 1,
+      // message: `Вы ${findIndex + 1} в очереди`
+    }))
+  }else{
+    ws.send(JSON.stringify({
+      method: "waitingLine",
+      message: "Не найден"
+      // message: `Вы ${findIndex + 1} в очереди`
+    }))
+  }
+
 }
 
 // function sendNewCoords(flightRoute) {

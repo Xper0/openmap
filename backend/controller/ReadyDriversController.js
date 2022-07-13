@@ -2,7 +2,7 @@ import ReadyDrivers from "../models/ReadyDriversModel.js";
 
 const findReadyDrivers = async (req, res) => {
     const drivers = req.query;
-    let find = await ReadyDrivers.findOne({})
+    let find = await ReadyDrivers.find({})
     res.status(200).json({
         message: find
     })
