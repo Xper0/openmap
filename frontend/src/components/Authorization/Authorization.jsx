@@ -21,7 +21,9 @@ const Authorization = () => {
     }, [userInfo]);
 
     const logIn = async () => {
-        let user = await axios(`http://127.0.0.1:5000/api/login?email=${userInfo.email}&password=${userInfo.password}`)
+        let user = await axios(`http://127.0.0.1:5000/api/login?email=${userInfo.email}&password=${userInfo.password}`, {
+            withCredentials: true
+        })
         console.log(user)
         if (user.data.msg === "Добро пожаловать"){
             navigate("/map")

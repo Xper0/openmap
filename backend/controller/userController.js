@@ -43,6 +43,11 @@ const authUser = async (req, res) => {
     const accessToken = createAccessToken(user._id)
     // req.session.email = user._doc.email
     // console.log(req.session)
+    res.cookie(`token`, accessToken, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24,
+    });
     res.status(200).json({
       msg: "Добро пожаловать",
       result: user,

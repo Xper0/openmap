@@ -220,9 +220,9 @@ const FlightRouter = () => {
                     {/*</Listroute>*/}
                 </div>
             </div>
-                    <div>
-                        <input value={alarmMessage} onChange={ e => setAlarmMessage(e.target.value)} placeholder="Предупреждение" />
-                        <button onClick={() => sendMessage()}>Отправить</button>
+                    <div className="flightrouter-alarm">
+                        <input className="flightrouter__input" value={alarmMessage} onChange={ e => setAlarmMessage(e.target.value)} placeholder="Предупреждение" />
+                        <button className="flightrouter__btn" onClick={() => sendMessage()}>Отправить</button>
                     </div>
             {/*<div className="flightrouter-content">*/}
             {/*    <Listroute>*/}

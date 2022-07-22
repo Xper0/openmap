@@ -25,6 +25,25 @@
     }
 
   }
+  .flightrouter-alarm{
+    margin-top: 50px;
+    .flightrouter__input{
+      width: 250px;
+      height: 30px;
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 20px;
+    }
+    .flightrouter__btn{
+      margin-left: 10px;
+      width: 150px;
+      height: 45px;
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 20px;
+      background: transparent;
+    }
+  }
   .flightrouter-add-btn{
     display: flex;
     justify-content: space-between;

@@ -20,6 +20,7 @@ import routePointRouter from "./routs/routePointRouter.js";
 import garageRouter from "./routs/garageRouter.js";
 import  http  from "http";
 import axios from "axios";
+import cookieParser from "cookie-parser";
 import {findCrew} from "./controller/CrewController.js";
 import ReadyDrivers from "./models/ReadyDriversModel.js";
 
@@ -37,12 +38,17 @@ const port = process.env.PORT || 5000;
  */
 
 app.use(express.json());
-app.use(
-  cors({
-    // origin: ["http://127.0.0.1:8080","http://localhost:8080/", "http://127.0.0.1:3000"],
-    // methods: ["GET", "POST"]
-  })
-);
+app.use(cors({
+  credentials: true,
+  origin: ["http://127.0.0.1:8080","http://localhost:8080/", "http://127.0.0.1:3000", "http://localhost:3000"],
+}))
+// app.use(
+//   cors({
+//     origin: ["http://127.0.0.1:8080","http://localhost:8080/", "http://127.0.0.1:3000", "http://localhost:3000"],
+//     methods: ["GET", "POST"]
+//   })
+// );
+app.use(cookieParser())
 
 /** Api
  * EmployeeRouter - Сотрудники

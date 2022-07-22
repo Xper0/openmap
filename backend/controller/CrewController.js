@@ -40,9 +40,7 @@ const findCrew = async (req, res) => {
 
 const createCrew = async (req, res) => {
     try {
-        // console.log(req.body)
         const crewBody = req.body
-        // const crew = req.query
         if (crewBody){
             const findCrew = await CrewModel.findOne({drivers: crewBody.drivers})
             if (findCrew){

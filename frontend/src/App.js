@@ -77,6 +77,7 @@ function App() {
             // dispatch(setFlightRoute(flightData.data.message))
             dispatch(fetchInitData())
             dispatch(fetchFlightRouter())
+            console.log(document.cookie)
             setLoading(true)
 
         }
